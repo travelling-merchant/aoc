@@ -8,9 +8,31 @@ fn main(){
 	let wire_values: HashMap<&str,i32> = HashMap::new();
 	let map_with_keys = fill_map_with_keys_wow(wire_values.clone(),file_content.clone());
 	let update_map_with_basic_assignment = insert_basic_wire_assignment(map_with_keys.clone(),file_content.clone());
+	//add droped of valready filled in values in vec
+	let _work_in_prog = actually_fill_map(map_with_keys.clone(),file_content.clone());
+
+	println!("map after value assignemtn{:#?} default map {:#?}",update_map_with_basic_assignment,map_with_keys);
 	println!("map after value assignemtn{:#?} default map {:#?}",update_map_with_basic_assignment,map_with_keys);
 }
+fn actually_fill_map<'a>(map:HashMap<&'a str ,i32>, file_input:Vec<&'a str>)->HashMap<&'a str,i32>{
+	let _vec_to_be_destroyed = file_input.clone();
+	let mut temp_map = map;
 
+	for entry in file_input{
+			if entry.contains("->") {
+				let value = entry.split_whitespace().last().expect("yes, of course... ");		
+				let value_to_be_copied = entry.split_whitespace().next().expect("why not working");		
+				let default_value = -1;
+				if *temp_map.get(value).unwrap() != default_value{
+					let new_value = temp_map.get(value).expect("why do i need so much sleep");	
+					temp_map.insert(value_to_be_copied,*new_value);
+					}
+				}
+			else{ println!("something went wrong");}
+			
+		};
+		temp_map	
+}
 // while entry in hasmap that is != -1 still in string copy 
 //check if its in string entry
 //if yes and A not operator aswell do calc and add to hasmap
