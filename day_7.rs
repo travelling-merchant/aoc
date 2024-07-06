@@ -9,8 +9,8 @@ fn main(){
 	let map_with_keys = fill_map_with_keys_wow(wire_values.clone(),file_content.clone());
 	let update_map_with_basic_assignment = insert_basic_wire_assignment(map_with_keys.clone(),file_content.clone());
 	
-	let _updated_vec = remove_already_filled_of_vec_because_me_stupid(&update_map_with_basic_assignment.expect(""),file_content.clone());
-	let work_in_prog = actually_fill_map(map_with_keys.clone(),file_content.clone());
+	let updated_vec = remove_already_filled_of_vec_because_me_stupid(&update_map_with_basic_assignment.expect(""),file_content.clone());
+	let work_in_prog = actually_fill_map(map_with_keys.clone(),updated_vec.clone());
 	println!("full map {:#?}",work_in_prog);
 }
 
@@ -34,23 +34,19 @@ no_more_values -=1;
 println!("fixed vector {:#?}",fixed_vec);
 fixed_vec
 } 
+
+
+
+
 fn actually_fill_map<'a>(map:HashMap<&'a str ,i32>, file_input:Vec<&'a str>)->HashMap<&'a str,i32>{
 	let mut vec_to_be_destroyed = file_input.clone();
 	let mut temp_map = map;
-	while vec_to_be_destroyed.is_empty() == false{  
-
 	let default_value = -1;
+	while vec_to_be_destroyed.is_empty() == false{  
+	println!("current state of vec{:#?}",vec_to_be_destroyed);
 			for (i,entry) in vec_to_be_destroyed.clone().iter().enumerate(){	
-			if entry.contains("->") {
-				let value = entry.split_whitespace().last().expect("yes, of course... ");		
-				let value_to_be_copied = entry.split_whitespace().next().expect("why not working");		
-				if *temp_map.get(value).unwrap() != default_value{
-					let new_value = temp_map.get(value).expect("why do i need so much sleep");	
-					temp_map.insert(value_to_be_copied,*new_value);
-					vec_to_be_destroyed.remove(i);
-					}
-				}
-				else if entry.contains("NOT"){
+
+				if entry.contains("NOT"){
 				
 				let value_to_be_assigned = entry.split_whitespace().nth(3).expect("yes, of course... ");		
 				let value_to_be_copied = entry.split_whitespace().nth(1).expect("why not working");		
@@ -100,20 +96,29 @@ fn actually_fill_map<'a>(map:HashMap<&'a str ,i32>, file_input:Vec<&'a str>)->Ha
 				}
 				else if entry.contains("OR"){
 				
-				let value_to_be_added = entry.split_whitespace().nth(0).expect("yes, of course... ");		
-				let value_to_be_added_too = entry.split_whitespace().nth(2).expect("why not working");		
+				let value_to_be_or = entry.split_whitespace().nth(0).expect("yes, of course... ");		
+				let value_to_be_or_too = entry.split_whitespace().nth(2).expect("why not working");		
 				let value_to_be_result = entry.split_whitespace().nth(4).expect("why not working");		
 				
-				if *temp_map.get(value_to_be_added).unwrap() != default_value && *temp_map.get(value_to_be_added_too).unwrap() != default_value{
-					let new_value = temp_map.get(value_to_be_added).expect("why do i need so much sleep");	
-					let new_value_too = temp_map.get(value_to_be_added_too).expect("why do i need so much sleep");	
-					temp_map.insert(value_to_be_result,new_value | new_value_too);
+				if *temp_map.get(value_to_be_or).unwrap() != default_value && *temp_map.get(value_to_be_or).unwrap() != default_value{
+					let new_value = temp_map.get(value_to_be_or).expect("why do i need so much sleep");	
+					let new_value_too = temp_map.get(value_to_be_or_too).expect("why do i need so much sleep");	
+					let v_after_calc = new_value | new_value_too;
+					println!("this should be the value wirth or {v_after_calc}");
+					temp_map.insert(value_to_be_result,v_after_calc);
 					vec_to_be_destroyed.remove(i);
 					}
 				}
 				else{
-				 println!("CRY ABOUT IT ");
+				let value = entry.split_whitespace().last().expect("yes, of course... ");		
+				let value_to_be_copied = entry.split_whitespace().next().expect("why not working");		
+				if *temp_map.get(value).unwrap() != default_value{
+					let new_value = temp_map.get(value).expect("why do i need so much sleep");	
+					temp_map.insert(value_to_be_copied,*new_value);
+					vec_to_be_destroyed.remove(i);
+					}
 				}
+		println!("end of loop");
 			
 		};
 	}
