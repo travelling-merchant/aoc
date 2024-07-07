@@ -1,10 +1,15 @@
 use std::collections::HashMap;
 use std::io::Error;
 use std::ops::Index;
-
+use std::fs;
 fn main(){
-	let file_content = vec!["123 -> x","456 -> y","x AND y -> d","x OR y -> e", "x LSHIFT 2 -> f","y RSHIFT 2 -> g","NOT x -> h","NOT y -> i"];
-
+	//let file_content = vec!["123 -> x","456 -> y","x AND y -> d","x OR y -> e", "x LSHIFT 2 -> f","y RSHIFT 2 -> g","NOT x -> h","NOT y -> i"];
+	let mut file_content:Vec<&str> = Vec::new();
+	let f = fs::read_to_string("day_7.txt").expect("sad, you don't have anyone to gift a file to you");
+	for line in f.lines()
+	{
+	file_content.push(line);
+	}
 
 	let wire_values: HashMap<&str,i32> = HashMap::new();
 	let map_with_keys = fill_map_with_keys_wow(wire_values.clone(),file_content.clone());
@@ -15,7 +20,7 @@ fn main(){
 	let complete = actually_fill_map(mid_map,updated_vec);
 	println!("full map {:#?}",complete);
 }
-
+//this is broken i  think need to fix
 fn remove_already_filled_of_vec_because_me_stupid<'a>(map:HashMap<&'a str ,i32>,file_input:Vec<&'a str>)->(Vec<&'a str>,HashMap<&'a str, i32>){
 	let mut fixed_vec = file_input.clone();
 	let map_to_read = map;
