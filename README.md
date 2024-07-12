@@ -11,3 +11,14 @@ rustc rustfile.rs
 ./rustfile
 
 ```
+
+additional notes
+
+I made a exception on technical docs like the md5 docs to use ai and other docs.
+so even someone like me can understand it in a reasonble time.
+
+further challange ideas 
+
+solve a year without clone
+use only hex as values
+use only binarry numbers

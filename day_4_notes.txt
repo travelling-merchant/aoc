@@ -1,0 +1,24 @@
+message -> 128 bit (fingerprint,message digest)
+word = 32-bit thingy
+bye = 8 bit thingy
+x_i = exp x_1,x_2
+x^i = exp x^3 x * x* x
+XvY = Bitwise OR
+X Y = Bitwise AND
+
+So first I have to see my input as just a list of bits basically
+
+Step 1
+
+append bits (trash)  one single 1 bit and then 0 Bits til it has a reminder of 448 when  devided by 51.
+
+Step 2 get the lengh of the original mesg and * 8 for bits and then append the number as u64 to the end of step one 
+
+
+Step 3 initialize buffer called a b c d with values form docs
+
+
+Step 4 cry
+so first we create 4 functions called ( f, g , h, j)
+
+then we need to change or u8 vec to 32 bit values u32
