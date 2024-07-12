@@ -24,6 +24,8 @@ fn circle_of_life(input:String)->Vec<u8>{
  let you_mad = input.len();
  let stage_one = denial(input);
  let stage_two = anger(stage_one,you_mad);
+ let _stage_three = bargaining ();
+ let stage_three_too = MD5Buffer::new();
 stage_two
 }
 
@@ -62,3 +64,38 @@ input_with_append.push(*byte);
 }
 input_with_append
 }
+
+
+#[derive(Debug)]
+struct MD5Buffer{
+a:u32,
+b:u32,
+c:u32,
+d:u32
+}
+// I SWEAR AT THE END EVERYTHING IS A FUNCTION
+// IS IMPL REALLY THAT MUCH BETTER
+// FUCK EVERYONE ,REALLY
+// IMPL IS JUST A UNJUSTLY GLORRIFIED FUNCTION
+fn bargaining()->MD5Buffer{
+	let r = MD5Buffer{
+	a:0x67452301,
+	b:0xefcdab89,
+	c:0x98badcfe,
+	d:0x10325476,
+	};
+	r
+}
+impl MD5Buffer{
+	fn new() ->Self{
+		MD5Buffer{
+		a:0x67452301,
+		b:0xefcdab89,
+		c:0x98badcfe,
+		d:0x10325476,
+		}
+	}
+}
+
+
+//fn depression(){}
