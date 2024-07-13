@@ -106,34 +106,34 @@ fn depression(process_msg:Vec<u8>)->Vec<u32>{
 	// just wtf am I reading in the MD 5 Manual??
 	// whatever happens in step 4 in the guide should be like 4 different steps!
 	// first we create some fun litle bit operator things, easy
-	fn capital_f(x:u32,y:u32,z:u32)->u32{ 
+	fn f(x:u32,y:u32,z:u32)->u32{ 
 	(x & y) | (!x & z)
 	}
 
-	fn capital_g(x:u32,y:u32,z:u32)->u32{ 
+	fn g(x:u32,y:u32,z:u32)->u32{ 
 	(x & z) | (y & !z)
 	}
 
-	fn capital_h(x:u32,y:u32,z:u32)->u32{ 
+	fn h(x:u32,y:u32,z:u32)->u32{ 
 	x ^ y ^ z
 	}
 
-	fn capital_i(x:u32,y:u32,z:u32)->u32{ 
+	fn i(x:u32,y:u32,z:u32)->u32{ 
 	y ^ (x | !z)
 	}
 	
 	// turn vec u8 into vec u32 for next steps owo
 	let mut words: Vec<u32> = Vec::new();
-	let mut buffer:u32 = 0;
+	let mut bad_buffer:u32 = 0;
 	let mut byte_index = 0;
 	
 	for byte in process_msg.iter(){
-	buffer = buffer << 8;
-	buffer |= *byte as u32;
+	bad_buffer = bad_buffer << 8;
+	bad_buffer |= *byte as u32;
 	byte_index +=1;
 		if byte_index % 4 == 0{
-		words.push(buffer);
-		buffer = 0;	
+		words.push(bad_buffer);
+		bad_buffer = 0;	
 		}
 	}
 
@@ -145,10 +145,49 @@ fn depression(process_msg:Vec<u8>)->Vec<u32>{
 	for block_index in 0..words.len()/16{ // diveded by 16 only sets the amount of iterations right
 		let block_words = &words[block_index * 16..block_index * 16 + 16]; //  this actually creates the 16 word / bit block, I hope
 
-	aa = buffer.a;
-	bb = buffer.b;
-	cc = buffer.c;
-	dd = buffer.d;
+		macro_rules! Magic(
+		($a:expr,$b:expr,$c:expr,$d:expr,$:block_word,$s:expr,$math:expr) =>{
+		//$a = $b +($a + f($b,$c,$d) + $block_word[block_index] + $math) << $s)
+		$a = $b.wrapping_add($a.wrapping_add(f($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+		};
+		);
+	
+		let s1 = 7;
+		let s2 = 12;
+		let s3 = 17;
+		let s4 = 22;
+
+		!Magic(buffer.a,buffer.b,buffer.c,buffer.d,block_word[0],s1,t[0]);
+		!Magic(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[4]);
+		!Magic(buffer.a,buffer.b,buffer.c,buffer.d,block_word[8],s1,t[8]);
+		!Magic(buffer.a,buffer.b,buffer.c,buffer.d,block_word[12],s1,t[12]);
+
+		!Magic(buffer.d,buffer.a,buffer.b,buffer.c,block_word[1],s2,t[1]);
+		!Magic(buffer.d,buffer.a,buffer.b,buffer.c,block_word[5],s2,t[5]);
+		!Magic(buffer.d,buffer.a,buffer.b,buffer.c,block_word[9],s2,t[9]);
+		!Magic(buffer.d,buffer.a,buffer.b,buffer.c,block_word[13],s2,t[13]);
+
+		!Magic(buffer.c,buffer.d,buffer.a,buffer.b,block_word[2],s3,t[2]);
+		!Magic(buffer.c,buffer.d,buffer.a,buffer.b,block_word[6],s3,t[6]);
+		!Magic(buffer.c,buffer.d,buffer.a,buffer.b,block_word[10],s3,t[10]);
+		!Magic(buffer.c,buffer.d,buffer.a,buffer.b,block_word[14],s3,t[14]);
+
+		!Magic(buffer.b,buffer.c,buffer.d,buffer.a,block_word[3],s4,t[3]);
+		!Magic(buffer.b,buffer.c,buffer.d,buffer.a,block_word[7],s4,t[7]);
+		!Magic(buffer.b,buffer.c,buffer.d,buffer.a,block_word[11],s4,t[11]);
+		!Magic(buffer.b,buffer.c,buffer.d,buffer.a,block_word[15],s4,t[15]);
+
+	 	let aa = buffer.a;
+		let bb = buffer.b;
+		let cc = buffer.c;
+		let dd = buffer.d;
+
+	//after magic
+	
+	buffer.a = buffer.a + aa;
+	buffer.b = buffer.b + bb;
+	buffer.c = buffer.c + cc;
+	buffer.d = buffer.d + dd;
 	}
 	
 
