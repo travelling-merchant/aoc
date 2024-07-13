@@ -2,8 +2,8 @@
 
 fn main(){
 // test print
-let x = circle_of_life("Big Coffee lalalalalaalalalalalalallaalalalalal".to_string());
-println!("test output step 1 {:#?}",x );
+let x = circle_of_life("".to_string());
+let md5 = end(x);
 let (sol_one,sol_two) = do_big_math();
 println!("Solution part one is {}",sol_one);
 println!("Solution part two is {}",sol_two);
@@ -20,16 +20,14 @@ let mut _count_2 = 0;
 
 
 
-fn circle_of_life(input:String)->Vec<u8>{
+fn circle_of_life(input:String)->MD5Buffer{
  let you_mad = input.len();
  let stage_one = denial(input);
  let stage_two = anger(stage_one,you_mad);
  // lol there was no bargaining imagine having a saying, are you kidding
  let _stage_three = bargaining ();
- let d = depression(stage_two);
- //stage_four
-let m:Vec<u8> = Vec::new();
-m
+ let stage_four  = depression(stage_two);
+ stage_four
 }
 
 
@@ -48,7 +46,6 @@ while (raw.len() * 8) % 512 != 448 {
 // add + one 0 bit to the end
 	raw.push(0x00);
 }
-
 raw
 }
 
@@ -101,7 +98,7 @@ impl MD5Buffer{
 }
 
 
-fn depression(process_msg:Vec<u8>)->Vec<u32>{
+fn depression(process_msg:Vec<u8>)->MD5Buffer{
 	let mut buffer = MD5Buffer::new();
 	// just wtf am I reading in the MD 5 Manual??
 	// whatever happens in step 4 in the guide should be like 4 different steps!
@@ -143,39 +140,132 @@ fn depression(process_msg:Vec<u8>)->Vec<u32>{
 	println!("math{:?}",t);
 
 	for block_index in 0..words.len()/16{ // diveded by 16 only sets the amount of iterations right
-		let block_words = &words[block_index * 16..block_index * 16 + 16]; //  this actually creates the 16 word / bit block, I hope
+		let block_word = &words[block_index * 16..block_index * 16 + 16]; //  this actually creates the 16 word / bit block, I hope
 
 		macro_rules! Magic(
-		($a:expr,$b:expr,$c:expr,$d:expr,$:block_word,$s:expr,$math:expr) =>{
-		//$a = $b +($a + f($b,$c,$d) + $block_word[block_index] + $math) << $s)
-		$a = $b.wrapping_add($a.wrapping_add(f($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
-		};
+		($a:expr,$b:expr,$c:expr,$d:expr,$block_word:expr,$s:expr,$math:expr) =>{
+		$a = $b.wrapping_add(($a.wrapping_add(f($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+			};
 		);
 	
 		let s1 = 7;
 		let s2 = 12;
 		let s3 = 17;
 		let s4 = 22;
+		println!("before magic 1 {} value t  {}",block_word[0],t[0]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[0],s1,t[0]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[4]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[8],s1,t[8]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[12],s1,t[12]);
 
-		!Magic(buffer.a,buffer.b,buffer.c,buffer.d,block_word[0],s1,t[0]);
-		!Magic(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[4]);
-		!Magic(buffer.a,buffer.b,buffer.c,buffer.d,block_word[8],s1,t[8]);
-		!Magic(buffer.a,buffer.b,buffer.c,buffer.d,block_word[12],s1,t[12]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[1],s2,t[1]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[5],s2,t[5]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[9],s2,t[9]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[13],s2,t[13]);
 
-		!Magic(buffer.d,buffer.a,buffer.b,buffer.c,block_word[1],s2,t[1]);
-		!Magic(buffer.d,buffer.a,buffer.b,buffer.c,block_word[5],s2,t[5]);
-		!Magic(buffer.d,buffer.a,buffer.b,buffer.c,block_word[9],s2,t[9]);
-		!Magic(buffer.d,buffer.a,buffer.b,buffer.c,block_word[13],s2,t[13]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[2],s3,t[2]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[6],s3,t[6]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[10],s3,t[10]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[14],s3,t[14]);
 
-		!Magic(buffer.c,buffer.d,buffer.a,buffer.b,block_word[2],s3,t[2]);
-		!Magic(buffer.c,buffer.d,buffer.a,buffer.b,block_word[6],s3,t[6]);
-		!Magic(buffer.c,buffer.d,buffer.a,buffer.b,block_word[10],s3,t[10]);
-		!Magic(buffer.c,buffer.d,buffer.a,buffer.b,block_word[14],s3,t[14]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[3],s4,t[3]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[7],s4,t[7]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[11],s4,t[11]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[15],s4,t[15]);
 
-		!Magic(buffer.b,buffer.c,buffer.d,buffer.a,block_word[3],s4,t[3]);
-		!Magic(buffer.b,buffer.c,buffer.d,buffer.a,block_word[7],s4,t[7]);
-		!Magic(buffer.b,buffer.c,buffer.d,buffer.a,block_word[11],s4,t[11]);
-		!Magic(buffer.b,buffer.c,buffer.d,buffer.a,block_word[15],s4,t[15]);
+		let s1 = 5;
+		let s2 = 9;
+		let s3 = 14;
+		let s4 = 20;
+
+		macro_rules! Magic(
+		($a:expr,$b:expr,$c:expr,$d:expr,$block_word:expr,$s:expr,$math:expr) =>{
+		$a = $b.wrapping_add(($a.wrapping_add(g($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+			};
+		);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[1],s1,t[16]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[5],s1,t[20]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[9],s1,t[24]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[13],s1,t[28]);
+
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[6],s2,t[17]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[10],s2,t[21]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[14],s2,t[25]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[2],s2,t[29]);
+
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[11],s3,t[18]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[15],s3,t[22]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[3],s3,t[26]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[7],s3,t[30]);
+
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[0],s4,t[19]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[4],s4,t[23]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[8],s4,t[27]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[12],s4,t[31]);
+
+		let s1 = 4;
+		let s2 = 11;
+		let s3 = 16;
+		let s4 = 23;
+
+		macro_rules! Magic(
+		($a:expr,$b:expr,$c:expr,$d:expr,$block_word:expr,$s:expr,$math:expr) =>{
+		$a = $b.wrapping_add(($a.wrapping_add(h($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+			};
+		);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[5],s1,t[32]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[1],s1,t[36]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[13],s1,t[40]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[9],s1,t[44]);
+
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[8],s2,t[33]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[4],s2,t[37]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[0],s2,t[41]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[12],s2,t[45]);
+
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[11],s3,t[34]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[7],s3,t[38]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[3],s3,t[42]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[15],s3,t[46]);
+
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[14],s4,t[35]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[10],s4,t[39]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[6],s4,t[43]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[2],s4,t[47]);
+
+
+		let s1 = 6;
+		let s2 = 10;
+		let s3 = 15;
+		let s4 = 21;
+
+		macro_rules! Magic(
+		($a:expr,$b:expr,$c:expr,$d:expr,$block_word:expr,$s:expr,$math:expr) =>{
+		$a = $b.wrapping_add(($a.wrapping_add(i($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+			};
+		);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[0],s1,t[48]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[12],s1,t[52]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[8],s1,t[56]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[60]);
+
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[7],s2,t[49]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[3],s2,t[53]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[15],s2,t[57]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[11],s2,t[61]);
+
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[14],s3,t[50]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[10],s3,t[54]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[6],s3,t[58]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[2],s3,t[62]);
+
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[5],s4,t[51]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[1],s4,t[55]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[13],s4,t[59]);
+		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[9],s4,t[63]);
 
 	 	let aa = buffer.a;
 		let bb = buffer.b;
@@ -184,14 +274,42 @@ fn depression(process_msg:Vec<u8>)->Vec<u32>{
 
 	//after magic
 	
-	buffer.a = buffer.a + aa;
-	buffer.b = buffer.b + bb;
-	buffer.c = buffer.c + cc;
-	buffer.d = buffer.d + dd;
+	buffer.a = buffer.a.wrapping_add(aa);
+	buffer.b = buffer.b.wrapping_add(bb);
+	buffer.c = buffer.c.wrapping_add(cc);
+	buffer.d = buffer.d.wrapping_add(dd);
 	}
 	
 
-words
+buffer
+}
+fn end(b:MD5Buffer)->(){
+let mut char_v:Vec<u8> = Vec::new();
+//	println!("lenght {:#?}",b.a.to_be_bytes());
+	for byte in b.a.to_le_bytes().iter(){
+	char_v.push(*byte);
+	println!("byte to push {}",byte);
+	println!("char vec {:#?}",char_v);
+		}
+	for byte in b.b.to_le_bytes().iter(){
+	char_v.push(*byte);
+	}
+	for byte in b.c.to_le_bytes().iter(){
+	char_v.push(*byte);
+	}
+	for byte in b.d.to_le_bytes().iter(){
+	char_v.push(*byte);
+	}
+//let result = String::from_utf8(char_v).expect("help");
+//result
+for byte in char_v{
+print!("{:x}",byte);
+}
+//jlet r = b.a.to_le_bytes();
+//let r_2 = b.b.to_le_bytes();
+//let r_3= b.c.to_le_bytes();
+//let r_4= b.d.to_le_bytes();
+//println!("le bites as hex {:#x}{:#x}{:#x}{:#x}",r,r_2,r_3,r_4);
 }
 
 // I was sleeping during math back in school
