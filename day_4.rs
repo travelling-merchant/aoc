@@ -2,7 +2,7 @@
 
 fn main(){
 // test print
-let x = circle_of_life("".to_string());
+let x = circle_of_life("abc".to_string());
 let md5 = end(x);
 let (sol_one,sol_two) = do_big_math();
 println!("Solution part one is {}",sol_one);
@@ -54,13 +54,16 @@ fn anger(mut input_with_append:Vec<u8>,o_msg:usize)->Vec<u8>{
 // docs speci we append the lengh od the msg to step 1
 // so len of msg * 8 because else we only have the amount of bytes / chars 
 let len_i_b = (o_msg as u64) * 8;
-
+println!("len {:x}",len_i_b);
 // to the fancy thing turn in bites with confusing terms (little-endian) why that name?
 let len_b = len_i_b.to_le_bytes();
 
 // you knwo loops, good, I dont
 for byte in len_b.iter(){
 input_with_append.push(*byte);
+}
+for v in input_with_append.iter(){
+print!("{:x}",v);
 }
 input_with_append
 }
@@ -118,40 +121,39 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 	fn i(x:u32,y:u32,z:u32)->u32{ 
 	y ^ (x | !z)
 	}
-	
 	// turn vec u8 into vec u32 for next steps owo
 	let mut words: Vec<u32> = Vec::new();
-	let mut bad_buffer:u32 = 0;
 	let mut byte_index = 0;
-	
-	for byte in process_msg.iter(){
-	bad_buffer = bad_buffer << 8;
-	bad_buffer |= *byte as u32;
-	byte_index +=1;
-		if byte_index % 4 == 0{
-		words.push(bad_buffer);
-		bad_buffer = 0;	
-		}
-	}
 
-	println!("words{:#?}",words);
+	while byte_index < process_msg.len() {
+	  let mut word: u32 = 0;
+	  // Loop through 4 bytes (assuming 32-bit words)
+	  for i in 0..4 {
+	  if byte_index + i < process_msg.len() {
+	  // Use indexing and bit shifting to build the word in little-endian order
+	  word |= (process_msg[byte_index + i] as u32) << (i * 8);
+    			}
+  		}
+		words.push(word);
+		byte_index += 4;
+	}
+	
 	// get da complicated math
 	let t = acceptance();
-	println!("math{:?}",t);
 
 	for block_index in 0..words.len()/16{ // diveded by 16 only sets the amount of iterations right
 		let block_word = &words[block_index * 16..block_index * 16 + 16]; //  this actually creates the 16 word / bit block, I hope
 
 		macro_rules! Magic(
 		($a:expr,$b:expr,$c:expr,$d:expr,$block_word:expr,$s:expr,$math:expr) =>{
-		$a = $b.wrapping_add(($a.wrapping_add(f($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+		$a = $b.wrapping_add(($a.wrapping_add(f($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)).rotate_left($s))
 			};
 		);
 	
-		let s1 = 7;
-		let s2 = 12;
-		let s3 = 17;
-		let s4 = 22;
+		let s1:u32 = 7;
+		let s2:u32 = 12;
+		let s3:u32 = 17;
+		let s4:u32 = 22;
 		println!("before magic 1 {} value t  {}",block_word[0],t[0]);
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[0],s1,t[0]);
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[4]);
@@ -173,17 +175,17 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[11],s4,t[11]);
 		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[15],s4,t[15]);
 
-		let s1 = 5;
-		let s2 = 9;
-		let s3 = 14;
-		let s4 = 20;
+		let s1:u32 = 5;
+		let s2:u32 = 9;
+		let s3:u32 = 14;
+		let s4:u32 = 20;
 
 		macro_rules! Magic(
 		($a:expr,$b:expr,$c:expr,$d:expr,$block_word:expr,$s:expr,$math:expr) =>{
-		$a = $b.wrapping_add(($a.wrapping_add(g($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+		$a = $b.wrapping_add(($a.wrapping_add(g($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)).rotate_left($s))
 			};
 		);
-
+		
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[1],s1,t[16]);
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[5],s1,t[20]);
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[9],s1,t[24]);
@@ -204,14 +206,14 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[8],s4,t[27]);
 		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[12],s4,t[31]);
 
-		let s1 = 4;
-		let s2 = 11;
-		let s3 = 16;
-		let s4 = 23;
+		let s1:u32 = 4;
+		let s2:u32 = 11;
+		let s3:u32 = 16;
+		let s4:u32 = 23;
 
 		macro_rules! Magic(
 		($a:expr,$b:expr,$c:expr,$d:expr,$block_word:expr,$s:expr,$math:expr) =>{
-		$a = $b.wrapping_add(($a.wrapping_add(h($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+		$a = $b.wrapping_add(($a.wrapping_add(h($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)).rotate_left($s))
 			};
 		);
 
@@ -236,14 +238,14 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[2],s4,t[47]);
 
 
-		let s1 = 6;
-		let s2 = 10;
-		let s3 = 15;
-		let s4 = 21;
+		let s1:u32 = 6;
+		let s2:u32 = 10;
+		let s3:u32 = 15;
+		let s4:u32 = 21;
 
 		macro_rules! Magic(
 		($a:expr,$b:expr,$c:expr,$d:expr,$block_word:expr,$s:expr,$math:expr) =>{
-		$a = $b.wrapping_add(($a.wrapping_add(i($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)) << $s)
+		$a = $b.wrapping_add(($a.wrapping_add(i($b,$c,$d)).wrapping_add($block_word).wrapping_add($math)).rotate_left($s))
 			};
 		);
 
@@ -285,7 +287,6 @@ buffer
 }
 fn end(b:MD5Buffer)->(){
 let mut char_v:Vec<u8> = Vec::new();
-//	println!("lenght {:#?}",b.a.to_be_bytes());
 	for byte in b.a.to_le_bytes().iter(){
 	char_v.push(*byte);
 	println!("byte to push {}",byte);
@@ -300,16 +301,9 @@ let mut char_v:Vec<u8> = Vec::new();
 	for byte in b.d.to_le_bytes().iter(){
 	char_v.push(*byte);
 	}
-//let result = String::from_utf8(char_v).expect("help");
-//result
 for byte in char_v{
 print!("{:x}",byte);
 }
-//jlet r = b.a.to_le_bytes();
-//let r_2 = b.b.to_le_bytes();
-//let r_3= b.c.to_le_bytes();
-//let r_4= b.d.to_le_bytes();
-//println!("le bites as hex {:#x}{:#x}{:#x}{:#x}",r,r_2,r_3,r_4);
 }
 
 // I was sleeping during math back in school
