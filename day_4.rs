@@ -2,7 +2,7 @@
 
 fn main(){
 // test print
-let x = circle_of_life("abc".to_string());
+let x = circle_of_life("message digest".to_string());
 let md5 = end(x);
 let (sol_one,sol_two) = do_big_math();
 println!("Solution part one is {}",sol_one);
@@ -138,6 +138,11 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 		byte_index += 4;
 	}
 	
+
+	 	let aa = buffer.a;
+	 	let bb = buffer.b;
+	 	let cc = buffer.c;
+	 	let dd = buffer.d;
 	// get da complicated math
 	let t = acceptance();
 
@@ -155,25 +160,26 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 		let s3:u32 = 17;
 		let s4:u32 = 22;
 		println!("before magic 1 {} value t  {}",block_word[0],t[0]);
+
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[0],s1,t[0]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[4]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[8],s1,t[8]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[12],s1,t[12]);
-
 		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[1],s2,t[1]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[5],s2,t[5]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[9],s2,t[9]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[13],s2,t[13]);
-
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[2],s3,t[2]);
-		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[6],s3,t[6]);
-		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[10],s3,t[10]);
-		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[14],s3,t[14]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[3],s4,t[3]);
 
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[3],s4,t[3]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[7],s4,t[7]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[11],s4,t[11]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[15],s4,t[15]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[4]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[5],s2,t[5]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[6],s3,t[6]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[7],s4,t[7]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[8],s1,t[8]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[9],s2,t[9]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[10],s3,t[10]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[11],s4,t[11]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[12],s1,t[12]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[13],s2,t[13]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[14],s3,t[14]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[15],s4,t[15]);
 
 		let s1:u32 = 5;
 		let s2:u32 = 9;
@@ -186,25 +192,26 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 			};
 		);
 		
+
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[1],s1,t[16]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[5],s1,t[20]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[9],s1,t[24]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[13],s1,t[28]);
-
 		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[6],s2,t[17]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[10],s2,t[21]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[14],s2,t[25]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[2],s2,t[29]);
-
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[11],s3,t[18]);
-		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[15],s3,t[22]);
-		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[3],s3,t[26]);
-		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[7],s3,t[30]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[0],s4,t[19]);
 
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[0],s4,t[19]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[4],s4,t[23]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[8],s4,t[27]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[12],s4,t[31]);
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[5],s1,t[20]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[10],s2,t[21]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[15],s3,t[22]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[4],s4,t[23]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[9],s1,t[24]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[14],s2,t[25]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[3],s3,t[26]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[8],s4,t[27]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[13],s1,t[28]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[2],s2,t[29]);
+		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[7],s3,t[30]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[12],s4,t[31]);
 
 		let s1:u32 = 4;
 		let s2:u32 = 11;
@@ -217,26 +224,26 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 			};
 		);
 
+
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[5],s1,t[32]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[1],s1,t[36]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[13],s1,t[40]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[9],s1,t[44]);
-
 		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[8],s2,t[33]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[4],s2,t[37]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[0],s2,t[41]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[12],s2,t[45]);
-
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[11],s3,t[34]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[14],s4,t[35]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[1],s1,t[36]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[4],s2,t[37]);
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[7],s3,t[38]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[10],s4,t[39]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[13],s1,t[40]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[0],s2,t[41]);
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[3],s3,t[42]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[6],s4,t[43]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[9],s1,t[44]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[12],s2,t[45]);
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[15],s3,t[46]);
-
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[14],s4,t[35]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[10],s4,t[39]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[6],s4,t[43]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[2],s4,t[47]);
-
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[2],s4,t[47]);
 
 		let s1:u32 = 6;
 		let s2:u32 = 10;
@@ -249,37 +256,38 @@ fn depression(process_msg:Vec<u8>)->MD5Buffer{
 			};
 		);
 
+
 		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[0],s1,t[48]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[12],s1,t[52]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[8],s1,t[56]);
-		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[60]);
-
 		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[7],s2,t[49]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[3],s2,t[53]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[15],s2,t[57]);
-		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[11],s2,t[61]);
-
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[14],s3,t[50]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[5],s4,t[51]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[12],s1,t[52]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[3],s2,t[53]);
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[10],s3,t[54]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[1],s4,t[55]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[8],s1,t[56]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[15],s2,t[57]);
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[6],s3,t[58]);
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[13],s4,t[59]);
+
+		Magic!(buffer.a,buffer.b,buffer.c,buffer.d,block_word[4],s1,t[60]);
+		Magic!(buffer.d,buffer.a,buffer.b,buffer.c,block_word[11],s2,t[61]);
 		Magic!(buffer.c,buffer.d,buffer.a,buffer.b,block_word[2],s3,t[62]);
-
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[5],s4,t[51]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[1],s4,t[55]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[13],s4,t[59]);
-		Magic!(buffer.b,buffer.c,buffer.d,buffer.a,block_word[9],s4,t[63]);
-
-	 	let aa = buffer.a;
-		let bb = buffer.b;
-		let cc = buffer.c;
-		let dd = buffer.d;
+		Magic!(buffer.b,buffer.c,buffer.b,buffer.a,block_word[9],s4,t[63]);
 
 	//after magic
 	
-	buffer.a = buffer.a.wrapping_add(aa);
-	buffer.b = buffer.b.wrapping_add(bb);
-	buffer.c = buffer.c.wrapping_add(cc);
-	buffer.d = buffer.d.wrapping_add(dd);
+	//buffer.a = buffer.a.wrapping_add(aa);
+	//buffer.b = buffer.b.wrapping_add(bb);
+	//buffer.c = buffer.c.wrapping_add(cc);
+	//buffer.d = buffer.d.wrapping_add(dd);
+
+	buffer.a = aa.wrapping_add(buffer.a);
+	buffer.b = bb.wrapping_add(buffer.b);
+	buffer.c = cc.wrapping_add(buffer.c);
+	buffer.d = dd.wrapping_add(buffer.d);
 	}
 	
 
