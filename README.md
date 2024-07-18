@@ -22,3 +22,4 @@ further challange ideas
 solve a year without clone
 use only hex as values
 use only binarry numbers
+disable undo and undo undo fully
