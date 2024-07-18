@@ -1,15 +1,44 @@
 fn main(){
-let x = fuck_md5("abc".to_string());
-for v in x.iter(){
-print!("{:x}",v);
-}
+let secret = String::from("ckczppom");
+let mut counter_one = 0;
+let mut counter_two = 0;
+
+	loop{
+		let secret_with_num = format!("{}{}",secret,counter_one);
+		let hash_result = fuck_md5(secret_with_num);
+		if hash_result.starts_with("00000"){
+			break;
+			}
+			else{
+			counter_one+=1;
+			}
+
+	}
+	loop{
+		let secret_with_num = format!("{}{}",secret,counter_two);
+		let hash_result = fuck_md5(secret_with_num);
+		if hash_result.starts_with("000000"){
+			break;
+			}
+			else{
+			counter_two+=1;
+			}
+	}
+println!("Solution to part one is {}",counter_one); 
+println!("Solution to part two is {}",counter_two); 
 }
 
-fn fuck_md5(input:String)->[u8;16]{
-let (result_one,result_1) = step_one(input);
-let result_two = step_two(result_one,result_1);
-let result_four = step_four(result_two);
-result_four
+fn fuck_md5(input:String)->String{
+	let (result_one,result1) = step_one(input);
+	let result_two = step_two(result_one,result1);
+	let result_four = step_four(result_two);
+
+	let mut result = String::from("");
+	for &entry in result_four.iter(){
+		result.push_str(&format!("{:02x}",entry));
+		
+	}
+result
 }
 fn step_one(input:String)->(Vec<u8>,usize){
 	let l= input.len(); 
@@ -47,10 +76,6 @@ fn step_four(input:Vec<u8>)->[u8;16]{
 			input[location +3],
 			]);
 		}
-		for e in x.iter(){
-		print!("{:08x}",e);
-		}
-		println!("");
 		let mut a = state[0];
 		let mut b = state[1];
 		let mut c = state[2];
