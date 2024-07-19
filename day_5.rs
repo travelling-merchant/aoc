@@ -8,38 +8,35 @@ println!("Solution to part two is {}",p_2);
 }
 fn p_two(input:&String)->u32{
 let mut result = 0;
-let mut good_words = 0;
-let mut double_double = 0;
 	for line in input.lines(){
-	let len = line.len();
-		for (i,c) in line.chars().enumerate(){
-			if i < len -2{
-				if c == line.chars().nth(i+2).expect("you failed, just one more time"){
-					good_words +=1;
+		let len = line.len();
+		let mut coffee = false;
+		let mut cookie = false;
+		let char_v:Vec<char> = line.chars().collect();
+		for  i in 0..len-2{ 
+			if char_v[i] == char_v[i+2]{
+				coffee = true;
+				break;
+				}
+		}
+		let mut for_line = 0;
+		for i in 0..len-3{
+				let mut count_1 = 0;
+			for c in line.chars(){
+				if count_1 >= len-3{break;}
+				if c  == char_v[count_1+2] && line.chars().nth(i+1).expect("ITS WEEKEND BITCH") == char_v[count_1+3]{
+					for_line +=1;
+					break;
 					}
-			
-				}
-				let mut counter = 0;
-				let mut line_track= 0;
-				while counter <= len -3 && line_track == 0{
-							if c == line.chars().nth(counter+2).expect("rainy day")
-							&& line.chars().nth(counter+1) == line.chars().nth(counter+3){
-							println!("{:?}{:?}",line.chars().nth(counter +1),line.chars().nth(counter +3));
-					 		double_double +=1;
-							line_track +=1;
-							}
-				counter +=1
-				}
+				count_1 +=1;
 			}
-			if good_words > 0 && double_double > 0{
-				result +=1;
-				}
-			good_words = 0;
-			double_double = 0;
-
-		
-
+		}
+			if for_line > 0{cookie = true;}
+		if coffee == true && cookie == true{
+			result+=1;
+			}
 	}
+	
 result
 }
 
