@@ -19,19 +19,25 @@ let mut result = 0;
 				break;
 				}
 		}
-		let mut for_line = 0;
-		for i in 0..len-3{
-				let mut count_1 = 0;
-			for c in line.chars(){
-				if count_1 >= len-3{break;}
-				if c  == char_v[count_1+2] && line.chars().nth(i+1).expect("ITS WEEKEND BITCH") == char_v[count_1+3]{
-					for_line +=1;
-					break;
-					}
-				count_1 +=1;
+		let mut symbols:Vec<String> = Vec::new();
+		for (i,entry) in line.chars().enumerate(){
+			if i < len -1{
+				let d = format!("{}{}",entry ,line.chars().nth(i+1).expect("fml"));
+				symbols.push(d);
 			}
 		}
-			if for_line > 0{cookie = true;}
+		for i in 0..len-1{
+			let nu = format!("{}{}",char_v[i],char_v[i+1]);
+				let mut con = 0;
+				for entry in &symbols{
+					if nu == *entry{con +=1;
+						if i > 0{
+							if char_v[i-1] == char_v[i] && char_v[i] == char_v[i+1]{con -=1}	
+						}	
+					}
+				}
+				if con > 1{ cookie =true;}
+		}
 		if coffee == true && cookie == true{
 			result+=1;
 			}
