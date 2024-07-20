@@ -26,18 +26,16 @@ let mut result = 0;
 				symbols.push(d);
 			}
 		}
-		for i in 0..len-1{
-			let nu = format!("{}{}",char_v[i],char_v[i+1]);
-				let mut con = 0;
-				for entry in &symbols{
-					if nu == *entry{con +=1;
-						if i > 0{
-							if char_v[i-1] == char_v[i] && char_v[i] == char_v[i+1]{con -=1}	
-						}	
-					}
+		
+		for (i,c) in line.chars().enumerate(){
+			if i < len -3{
+				let key = format!("{}{}",line.chars().nth(i).expect("sheeps are moving"),line.chars().nth(i+1).expect("but d cohi is empty"));
+				if symbols[i+2..len-1].contains(&key){
+					cookie = true;
+					}	
 				}
-				if con > 1{ cookie =true;}
 		}
+
 		if coffee == true && cookie == true{
 			result+=1;
 			}
