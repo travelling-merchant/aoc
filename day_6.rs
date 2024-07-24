@@ -13,52 +13,57 @@ fn main() {
 fn parse_instructions(input: String, lights: String) -> u32 {
     let mut result = 0;
 
+    // assigns the string to chars
     let mut chars: Vec<char> = lights.chars().collect();
+    // for every line in instruction then change things
     for line in input.lines() {
-        let half_proccessed: Vec<_> = line.split_whitespace().collect();
-        let mut v: Vec<u32> = Vec::new();
-        for entry in &half_proccessed {
-            if entry.contains(',') {
-                let nu: u32 = entry
+        // get the values splits in reverse
+        let half_proccessed: Vec<_> = line.split_whitespace().rev().collect();
+        //println!("half {:#?}", half_proccessed);
+        let mut v: Vec<usize> = Vec::new();
+        // for item in the line vec whos reverssed
+        for (i, ele) in half_proccessed.iter().enumerate() {
+            // I only care about the 2 entires with number in them
+            if i == 0 || i == 2 {
+                let one: u32 = ele
                     .split(',')
-                    .next()
-                    .expect("fml")
-                    .chars()
-                    .collect::<String>()
-                    .parse::<u32>()
-                    .expect("coffee in the morning is great");
-                let no: u32 = entry
+                    .nth(0)
+                    .expect("this number")
+                    .parse()
+                    .expect("getting sick");
+                let two: u32 = ele
                     .split(',')
-                    .last()
-                    .expect("fml")
-                    .chars()
-                    .collect::<String>()
-                    .parse::<u32>()
-                    .expect("coffee in the morning is very great");
-                let na = nu * 1000 + no;
-                //let na = no * 1000 + nu;
-                v.push(na);
+                    .nth(1)
+                    .expect("whats a number")
+                    .parse()
+                    .expect("is part of the human exp");
+                // formula to get the position on a 1000x1000 grid it one line i hope
+                let val: u32 = one * 1000 + two;
+                // push the position
+                v.push(val.try_into().expect("oh no"));
             }
+            //          println!("{:#?}", v);
         }
-        for i in 0..chars.len() {
-            if i >= v[0].try_into().expect("nothing") && i <= v[1].try_into().expect("nothing too")
-            {
-                if half_proccessed[1] == "on" {
-                    chars[i] = '1';
-                } else if half_proccessed[1] == "off" {
-                    chars[i] = '0';
+        let mut counter = 0;
+        // iter through the range of numbers that need to be changed
+        for _ in v[1]..v[0] {
+            // check the values of the 3 element
+            if half_proccessed[3] == "on" {
+                chars[v[1] + counter] = '1';
+            } else if half_proccessed[3] == "off" {
+                chars[v[1] + counter] = '0';
+            } else {
+                if chars[v[1] + counter] == '1' {
+                    chars[v[1] + counter] = '0';
                 } else {
-                    if chars[i] == '0' {
-                        chars[i] = '1';
-                    } else {
-                        chars[i] = '0';
-                    }
+                    chars[v[1] + counter] = '0';
                 }
             }
+            counter += 1;
         }
     }
     for c in chars {
-        if c != '0' {
+        if c == '1' {
             result += 1;
         }
     }
