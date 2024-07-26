@@ -44,6 +44,17 @@ fn parse_instructions(input: String, lights: String) -> u32 {
             }
             //          println!("{:#?}", v);
         }
+	for row in lights.lines(){
+		if i >= v[?]{
+			for c in row.chars{
+				if c[i] > j && < k{ //matching}
+			}
+		}
+	}
+	// get the lines shich are the the second index
+	// get distance to edge on both sides and change middle
+	// how to get the distance left?
+	// 
         let mut counter = 0;
         // iter through the range of numbers that need to be changed
         for _ in v[1]..v[0] {
@@ -72,8 +83,11 @@ fn parse_instructions(input: String, lights: String) -> u32 {
 
 fn create_grid() -> String {
     let mut i = 1000000;
+	let mut ii =0;
     let mut grid = String::new();
     while i > 0 {
+	ii += 1;
+	if ii > 999 { grid.push("\n") ii = 0}
         grid.push('0');
         i -= 1;
     }
