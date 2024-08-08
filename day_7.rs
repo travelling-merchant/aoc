@@ -1,199 +1,126 @@
 use std::collections::HashMap;
-use std::io::Error;
 use std::fs;
-fn main(){
-	// input for testing
-	let file_content = vec!["666 -> ä","777 -> ö","123 -> x","456 -> y","x AND y -> d","g -> ü","x OR y -> e", "x LSHIFT 2 -> f","y RSHIFT 2 -> g","NOT x -> h","NOT y -> i"];
-	//let mut file_content:Vec<&str> = Vec::new();
-	//let f = fs::read_to_string("day_7.txt").expect("sad, you don't have anyone to gift a file to you");
-	//for line in f.lines()
-	//{
-	//file_content.push(line);
-	//}
-
-	let wire_values: HashMap<&str,i32> = HashMap::new();
-	let map_with_keys = fill_map_with_keys_wow(wire_values.clone(),file_content.clone());
-	let update_map_with_basic_assignment = insert_basic_wire_assignment(map_with_keys.clone(),file_content.clone());
-		
-	let (updated_vec ,mid_map) = remove_already_filled_of_vec_because_me_stupid(update_map_with_basic_assignment.expect(""),file_content.clone());
-	let complete = actually_fill_map(mid_map,updated_vec);
-	println!("full map {:#?}",complete); 
+fn main() {
+    let (map_step_one, input) = retrive_instructions();
+    println!("{:#?}", input);
+    let result_two = proccess_instructions(map_step_one, input);
+    println!("{:#?}", result_two);
 }
+fn retrive_instructions() -> (HashMap<String, u16>, Vec<String>) {
+    let mut map: HashMap<String, u16> = HashMap::new();
+    let file = fs::read_to_string("day_7.txt".to_string()).expect("what is a file");
+    let _test_string = "x -> m \n 123 -> x \n 456 -> y \n x AND y -> d \n x OR y -> e \n x LSHIFT 2 -> f \n y RSHIFT 2 -> g \n NOT x -> h \n NOT y -> i";
+    let mut v: Vec<String> = Vec::new();
+    for line in file.lines() {
+        let first_element = line.split_whitespace().nth(0).expect("slowly returning");
+        let last_element = line
+            .split_whitespace()
+            .last()
+            .expect("who came up with next on first element");
+        if line.split_whitespace().collect::<Vec<_>>().len() == 3
+            && first_element.chars().all(char::is_numeric) == true
+        {
+            map.insert(
+                last_element.to_string(),
+                first_element
+                    .parse()
+                    .expect("wait I checked this number wtf"),
+            );
+            println!("sadly im sleepy");
+        } else {
+            v.push(line.to_string());
+        }
+    }
 
-fn remove_already_filled_of_vec_because_me_stupid<'a>(map:HashMap<&'a str ,i32>,file_input:Vec<&'a str>)->(Vec<&'a str>,HashMap<&'a str, i32>){
-	let fixed_vec = file_input.clone();
-	let map_to_read = map;
-	let mut list_with_indexes_to_remove:Vec<usize> = Vec::new();
-	for (i,entry) in fixed_vec.iter().enumerate(){
-		let first_split = entry.split_whitespace().nth(0);
-		if first_split.expect("").chars().next().unwrap().is_numeric(){
-			list_with_indexes_to_remove.push(i);
-			}
-	}
-	let mut retained_vec = Vec::new();
-	for ( i,despair) in fixed_vec.iter().enumerate(){
-	if !list_with_indexes_to_remove.iter().any(|hope|*hope == i){
-	retained_vec.push(despair.clone());}
-	}
-(retained_vec,map_to_read)
-} 
-
-
-
-// turns out im stupid i cant delete 0 here aswell since when its not yet assignable it needs to stay in the vec so I need to do something similar like on the other one.
-
-fn actually_fill_map<'a>(map:HashMap<&'a str ,i32>, file_input:Vec<&'a str>)->HashMap<&'a str,i32>{
-	let mut vec_to_be_destroyed = file_input.clone();
-	let mut temp_map : HashMap<&str, i32> = map;
-	println!("MAP IN Fill function before anything {:#?}",temp_map);
-	let default_value = -1;
-	let mut no_more_values = 1;
-	while no_more_values  >0{  
-	println!("current state of vec{:#?}",vec_to_be_destroyed);
-			let mut index_counter = 0;
-			for (i,entry) in vec_to_be_destroyed.clone().iter().enumerate(){	
-				println!("current iteraction value is {i}");
-					
-	println!("current state of vec{:#?}",vec_to_be_destroyed);
-				if entry.contains("NOT"){
-				
-				let value_to_be_assigned = entry.split_whitespace().nth(3).expect("yes, of course... ");		
-				let value_to_be_copied = entry.split_whitespace().nth(1).expect("why not working");		
-				
-				if *temp_map.get(value_to_be_copied).unwrap() != default_value{
-					let new_value = temp_map.get(value_to_be_copied).expect("why do i need so much sleep");	
-					let new_value_after_calc:u16 = !new_value.clone().to_owned()as u16;
-					//println!("new value not {new_value_after_calc}");
-					temp_map.insert(value_to_be_assigned,new_value_after_calc as i32);
-					no_more_values +=1;
-					//println!("NOT IS EXECTUED LINE BEFORE VEC INDEX DROP"); 
-					vec_to_be_destroyed.remove(index_counter);
-					//println!("NOT IS EXECTUED LINE AFTER VEC INDEX DROP");
-					//println!("MAP bfter NOT{:#?}",temp_map);
-					}
-				}
-				else if entry.contains("RSHIFT"){
-				
-				let value_to_be_shifted= entry.split_whitespace().nth(0).expect("yes, of course... ");		
-				let value_to_be_number:i32= entry.split_whitespace().nth(2).expect("yes, of course... ").parse().expect("THISNO NUMBER WTF?");		
-				let value_to_be_assigned= entry.split_whitespace().nth(4).expect("yes, of course... ");		
-				
-				if *temp_map.get(value_to_be_shifted).unwrap() != default_value{
-					let new_value_too = temp_map.get(value_to_be_shifted).expect("why do i need so much sleep");	
-					temp_map.insert(value_to_be_assigned,*new_value_too >> value_to_be_number);
-					no_more_values +=1;
-					//println!("RSHIFT IS EXECTUED LINE BEFORE VEC INDEX DROP"); 
-					vec_to_be_destroyed.remove(index_counter);
-					//println!("RSHIFT IS EXECTUED LINE AFTER VEC INDEX DROP");
-					}
-				}
-				else if entry.contains("LSHIFT"){
-				
-				let value_to_be_shifted= entry.split_whitespace().nth(0).expect("yes, of course... ");		
-				let value_to_be_number:i32= entry.split_whitespace().nth(2).expect("yes, of course... ").parse().expect("THISNO NUMBER WTF?");		
-				let value_to_be_assigned= entry.split_whitespace().nth(4).expect("yes, of course... ");		
-				
-				if *temp_map.get(value_to_be_shifted).unwrap() != default_value{
-					let new_value_too = temp_map.get(value_to_be_shifted).expect("why do i need so much sleep");	
-					temp_map.insert(value_to_be_assigned,*new_value_too << value_to_be_number);
-					no_more_values +=1;
-					
-					println!("LSHIFT IS EXECTUED LINE BEFORE VEC INDEX DROP"); 
-					vec_to_be_destroyed.remove(index_counter);
-					//println!("LSHIFT IS EXECTUED LINE AFTER VEC INDEX DROP");
-					}
-				}
-				else if entry.contains("AND"){
-				
-				let value_to_be_added = entry.split_whitespace().nth(0).expect("yes, of course... ");		
-				let value_to_be_added_too = entry.split_whitespace().nth(2).expect("why not working");		
-				let value_to_be_result = entry.split_whitespace().nth(4).expect("why not working");		
-				
-				if *temp_map.get(value_to_be_added).unwrap() != default_value && *temp_map.get(value_to_be_added_too).unwrap() != default_value{
-					let new_value = temp_map.get(value_to_be_added).expect("why do i need so much sleep");	
-					let new_value_too = temp_map.get(value_to_be_added_too).expect("why do i need so much sleep");	
-					temp_map.insert(value_to_be_result,new_value & new_value_too);
-					no_more_values +=1;
-					println!("AND IS EXECTUED LINE BEFORE VEC INDEX DROP");
-					vec_to_be_destroyed.remove(index_counter);
-					//println!("AND IS EXECTUED LINE AFTER VEC INDEX DROP");
-					}
-				}
-				else if entry.contains("OR"){
-				
-				let value_to_be_or = entry.split_whitespace().nth(0).expect("yes, of course... ");		
-				let value_to_be_or_too = entry.split_whitespace().nth(2).expect("why not working");		
-				let value_to_be_result = entry.split_whitespace().nth(4).expect("why not working");		
-				
-				if *temp_map.get(value_to_be_or).unwrap() != default_value && *temp_map.get(value_to_be_or).unwrap() != default_value{
-					let new_value = temp_map.get(value_to_be_or).expect("why do i need so much sleep");	
-					let new_value_too = temp_map.get(value_to_be_or_too).expect("why do i need so much sleep");	
-					let v_after_calc = new_value | new_value_too;
-					//println!("this should be the value wirth or {v_after_calc}");
-					temp_map.insert(value_to_be_result,v_after_calc);
-					no_more_values +=1;
-					//println!("OR IS EXECTUED LINE BEFORE VEC INDEX DROP");
-					vec_to_be_destroyed.remove(index_counter);
-					//println!("OR IS EXECTUED LINE AFTER VEC INDEX DROP");
-					}
-				}
-
-				else if entry.split_whitespace().collect::<Vec<_>>().len() == 3{
-				println!("wowies should be executed once on testin input");
-				let value = entry.split_whitespace().last().expect("yes, of course... ");		
-				let value_to_be_copied = entry.split_whitespace().nth(0).expect("why not working");		
-				println!("before if");
-				if *temp_map.get(value_to_be_copied).unwrap() != default_value{
-					print!("after if");
-					let new_value = temp_map.get(value_to_be_copied).expect("why do i need so much sleep");	
-					temp_map.insert(value,*new_value);
-					no_more_values +=1;
-					println!("ELSE IS EXECTUED LINE BEFORE VEC INDEX DROP");
-					vec_to_be_destroyed.remove(index_counter);
-					//println!("ELSE IS EXECTUED LINE AFTER VEC INDEX DROP");
-					}
-				}
-				else{index_counter += 1}
-
-		};
-
-	no_more_values -=1;	
-	}
-		//println!("hsdfafsfsfsdf {:#?}",vec_to_be_destroyed);
-		temp_map	
+    // eventuell add delete in string of filled in values
+    (map, v)
 }
-
-fn fill_map_with_keys_wow<'a>(map:HashMap<&'a str,i32>,file_input:Vec<&'a str>)->HashMap<&'a str,i32>{
-	let mut empty_map = map;
-	let input = file_input;
-	for entry in input{
-		let v:Vec<_> = entry.split_whitespace().collect();
-			for value in v{
-				if value.chars().all(char::is_alphanumeric) && value.chars().all(char::is_lowercase){
-					let default_value:i32 = -1;
-					empty_map.insert(value,default_value);
-					}
-			}
-	}
-	empty_map
-}
-
-
-fn insert_basic_wire_assignment<'a>(wire_map:HashMap<&'a str,i32>,file_input:Vec<&'a str>)->Result<HashMap<&'a str,i32>,Error>{
-	let mut wire_values: HashMap<&str,i32> = wire_map;
-	let input:Vec<&str> = file_input;
-	for entry in input{
-		let first_split = entry.split_whitespace().next().expect("FML");
-		let last_split = entry.split_whitespace().last().expect("FML");
+fn proccess_instructions(mut map: HashMap<String, u16>, mut inst: Vec<String>) -> HashMap<String, u16> {
+    // for line in inst
+    // if char is contained in has map of not assign
+    // if both chars are inside add target to map and delete entry of input
 	
-		let is_it_a_number = first_split.parse::<i32>();
-		match is_it_a_number{
-			Ok(_ok)=>{
-				wire_values.insert(last_split,is_it_a_number.expect("NOSLEEP BUT 3 AM"));
-			}
-			Err(_)=>print!(""),
+ while inst.len() > 0{
+	let mut to_remove:Vec<usize> = Vec::new();
+    for (i,entry) in inst.iter().enumerate() {
+	let first = entry.split_whitespace().nth(0).expect("salad?");
+	let second = entry.split_whitespace().nth(1).expect("no salad?");
+
+	let third = entry.split_whitespace().nth(2).expect("jelly?");
+
+		if first == "NOT"{ 
+			if map.contains_key(second){
+				let fourth = entry.split_whitespace().nth(3).expect("jelly?");
+				let result = map.get(second).expect("dont fall asleep");
+				let result = !result;
+				map.insert(fourth.to_string(),result);
+				to_remove.push(i);
+				}
 		}
-					
+		else if second == "LSHIFT" {
+			if map.contains_key(first){
+				let fifth = entry.split_whitespace().nth(4).expect("this can be to long so I cannot get this value for all?");
+				let result = map.get(first).expect("decision fatique");
+				let shift_val:u8 = third.parse().expect("how to solve something");
+				let result = result << 	shift_val;
+				map.insert(fifth.to_string(),result);
+				to_remove.push(i);
+			}
+		}
+		else if second == "RSHIFT" {
+			if map.contains_key(first){
+				let fifth = entry.split_whitespace().nth(4).expect("this can be to long so I cannot get this value for all?");
+				let result = map.get(first).expect("decision fatique");
+				let shift_val:u16 = third.parse().expect("how to solve something");
+				let result = result >> shift_val;
+				map.insert(fifth.to_string(),result);
+				to_remove.push(i);
+			}
+		}
+		else if second == "OR" {
+			if map.contains_key(first)&& map.contains_key(third){
+				let fifth = entry.split_whitespace().nth(4).expect("this can be to long so I cannot get this value for all?");
+				let value_one:u16 = *map.get(first).expect("decision fatique");
+				let value_two:u16 = *map.get(third).expect("how to badly");
+				let result = value_two | value_one;
+				map.insert(fifth.to_string(),result);
+				to_remove.push(i);
+			}
+		}
+		else if second == "AND" {
+				let fifth = entry.split_whitespace().nth(4).expect("this can be to long so I cannot get this value for all?");
+			if map.contains_key(third) && first == "1"{
+				let value_one:u16 = 1;
+				let value_two:u16 = *map.get(third).expect("how to badly");
+				let result = value_two & value_one;
+				map.insert(fifth.to_string(),result);
+				to_remove.push(i);
+			}
+			else if map.contains_key(first)&& map.contains_key(third){
+				let value_one:u16 = *map.get(first).expect("decision fatique");
+				let value_two:u16 = *map.get(third).expect("how to badly");
+				let result = value_two & value_one;
+				map.insert(fifth.to_string(),result);
+				to_remove.push(i);
+			}
+		}
+		else if second == "->"{
+			if map.contains_key(first){
+				let result = map.get(first).expect("purple light is best");
+				map.insert(third.to_string(),*result);
+				to_remove.push(i);
+			}	
+		}
+    }
+	let mut inst2 = Vec::new();
+	for (i,e) in  inst.iter().enumerate(){
+		if !to_remove.contains(&i){
+		inst2.push(e.to_string());
+		}
 	}
-Ok(wire_values)
+	inst = inst2;
+
+}
+println!("{:#?}",inst);
+    map
 }
