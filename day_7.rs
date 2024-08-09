@@ -3,7 +3,44 @@ use std::fs;
 fn main() {
     let (map_step_one, input) = retrive_instructions();
     let result_two = proccess_instructions(map_step_one, input);
-    println!("The solution to part one is {}", result_two.get("a").expect("this WAS SUPPOSED TO BE THE FUCKING SOLUTION"));
+    let r_one = result_two
+        .get("a")
+        .expect("this WAS SUPPOSED TO BE THE FUCKING SOLUTION");
+    println!("The solution to part one is {}", &r_one);
+    let (new_map, new_day) = new_politics_a_is_b(*r_one);
+    let result_three = proccess_instructions(new_map, new_day);
+    let r_two = result_three
+        .get("a")
+        .expect("this WAS SUPPOSED TO BE THE FUCKING SOLUTION");
+    println!("The solution to part two is {}", &r_two);
+}
+fn new_politics_a_is_b(a: u16) -> (HashMap<String, u16>, Vec<String>) {
+    let mut map: HashMap<String, u16> = HashMap::from([("b".to_string(), a)]);
+    let file = fs::read_to_string("day_7.txt".to_string())
+        .expect("everything is file on unix, but you are missing a important one lol");
+    let mut v: Vec<String> = Vec::new();
+    for line in file.lines() {
+        let first_element = line.split_whitespace().nth(0).expect("slowly returning");
+        let last_element = line
+            .split_whitespace()
+            .last()
+            .expect("who came up with next on first element");
+        if line.split_whitespace().collect::<Vec<_>>().len() == 3
+            && first_element.chars().all(char::is_numeric) == true
+        {
+            if last_element != "b" {
+                map.insert(
+                    last_element.to_string(),
+                    first_element
+                        .parse()
+                        .expect("wait I checked this number wtf"),
+                );
+            }
+        } else {
+            v.push(line.to_string());
+        }
+    }
+    (map, v)
 }
 fn retrive_instructions() -> (HashMap<String, u16>, Vec<String>) {
     let mut map: HashMap<String, u16> = HashMap::new();
@@ -35,7 +72,6 @@ fn proccess_instructions(
     mut map: HashMap<String, u16>,
     mut inst: Vec<String>,
 ) -> HashMap<String, u16> {
-
     while inst.len() > 0 {
         let mut to_remove: Vec<usize> = Vec::new();
         for (i, entry) in inst.iter().enumerate() {
