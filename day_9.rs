@@ -3,7 +3,7 @@ fn main() {
     let locations = create_the_list();
     //println!("{:?}",locations);
     let m = permutations(locations);
-//    println!("{:#?}", &m);
+	//println!("{:#?}", &m);
     println!("{:#?}", m.len());
 }
 
@@ -60,22 +60,3 @@ fn permutations(mut locations: Vec<String>) -> Vec<Vec<String>> {
 	}
     all_combos
 }
-/*fn permutations(mut locations: Vec<String>) -> Vec<Vec<String>> {
-    let mut all_combos: Vec<Vec<String>> = Vec::new();
-    let number_x = locations.len();
-    for _ in 0..locations.len() {
-        let mut ground_zero = 1;
-        let max_combo = 40320;
-        let counter = 40320;
-        all_combos.push(locations.clone());
-            while counter < max_combo{
-                for _ in ground_zero..number_x{
-                    locations[ground_zero..number_x].rotate_right(1);
-                    all_combos.push(locations.clone());
-                }
-                counter;
-            }
-        locations.rotate_right(1);
-    }
-    all_combos
-}*/
