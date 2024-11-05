@@ -1,5 +1,8 @@
 use std::fs;
+use std::time::Instant;
+const FILE_NAME:&str = "day_9t.txt";
 fn main() {
+	let start = Instant::now();
     let locations = create_the_list();
     //println!("{:?}",locations);
     let m = permutations(locations);
@@ -8,6 +11,8 @@ fn main() {
     let journey_dt = get_journey_data();
     let r_one = calc_tsp(journey_dt, m);
     println!("{:#?}", r_one);
+    println!("Time taken {:#?}", start.elapsed());
+	
 }
 #[derive(Debug)]
 struct Journey {
@@ -40,7 +45,7 @@ fn calc_tsp(journeys: Vec<Journey>, routes: Vec<Vec<String>>) -> u16 {
 }
 
 fn get_journey_data() -> Vec<Journey> {
-    let raw_data = fs::read_to_string("day_9.txt".to_string())
+    let raw_data = fs::read_to_string(FILE_NAME)
         .expect("If you see this, you fucked up real bad lol");
     let mut sweet_journeys: Vec<Journey> = Vec::new();
     for entry in raw_data.lines() {
@@ -67,7 +72,7 @@ fn get_journey_data() -> Vec<Journey> {
 
 fn create_the_list() -> Vec<String> {
     let mut locations: Vec<String> = Vec::new();
-    let raw_list = fs::read_to_string("day_9.txt".to_string())
+    let raw_list = fs::read_to_string(FILE_NAME)
         .expect("what are you doing again, you don't even have a file");
     for line in raw_list.lines() {
         let first_loc = line
