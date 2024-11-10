@@ -114,7 +114,7 @@ fn permutations(locations: Vec<String>) -> HashSet<Vec<String>> {
 }
 
 fn test_uwu(permutations: &HashSet<Vec<String>>) -> () {
-	// this test is absolutely useless now that I use a hashet, but whatever.....
+    // this test is absolutely useless now that I use a hashet, but whatever.....
     let correct_len = permutations.len();
     let unique_checked: HashSet<_> = permutations.iter().collect();
     println!("executing test...");
