@@ -1,16 +1,14 @@
 use std::fs;
+use std::collections::HashSet;
 use std::time::Instant;
-const FILE_NAME:&str = "day_9t.txt";
+const FILE_NAME:&str = "day_9.txt";
 fn main() {
 	let start = Instant::now();
     let locations = create_the_list();
-    //println!("{:?}",locations);
     let m = permutations(locations);
-    //println!("{:#?}", &m);
-    println!("{:#?}", &m.len());
     let journey_dt = get_journey_data();
     let r_one = calc_tsp(journey_dt, m);
-    println!("{:#?}", r_one);
+    println!("Solution to Part 1 = {:#?}", r_one);
     println!("Time taken {:#?}", start.elapsed());
 	
 }
@@ -20,9 +18,10 @@ struct Journey {
     target_loc: String,
     dist: u16,
 }
-fn calc_tsp(journeys: Vec<Journey>, routes: Vec<Vec<String>>) -> u16 {
+fn calc_tsp(journeys: Vec<Journey>, routes: HashSet<Vec<String>>) -> u16 {
+	test_uwu(&routes);
+	println!("calculate tsp...");
     let mut total_dist_count = u16::MAX;
-    //println!("{:#?}",&journeys);
     for route in routes {
         let mut dist_counter: u16 = 0;
         for (i, loc) in route.iter().enumerate() {
@@ -94,32 +93,27 @@ fn create_the_list() -> Vec<String> {
     }
     locations
 }
-fn permutations(mut locations: Vec<String>) -> Vec<Vec<String>> {
-    let mut all_combos: Vec<Vec<String>> = Vec::new();
-    let len = locations.len();
-    let mut shift_range = len - 2;
+fn permutations(locations: Vec<String>) -> HashSet<Vec<String>> {
+    let mut all_combos = HashSet::new();
+    all_combos.insert(locations.clone());
+	for i in 0..locations.len(){
+	let mut remaning = locations.to_vec();
+	remaning.remove(i);
+	
+	let sub_permutations = permutations(remaning);
+		for mut sub_permutation in sub_permutations{
+		sub_permutation.insert(0,locations[i].clone());
+		all_combos.insert(sub_permutation);
+		}
+	}
 
-    // calculate factorial number
-    let mut max = locations.len() - 1;
-    let mut all_num = locations.len();
-    while max > 0 {
-        all_num *= max;
-        max -= 1;
-    }
-    let mut counter = 0;
-    all_num -= 1;
-
-    all_combos.push(locations.clone());
-    while counter < all_num {
-        locations[shift_range..len].rotate_right(1);
-        if locations != all_combos[0] {
-            all_combos.push(locations.clone());
-            counter += 1;
-        } else {
-            if shift_range > 0 {
-                shift_range -= 1;
-            }
-        }
-    }
     all_combos
+}
+fn test_uwu(permutations:&HashSet<Vec<String>>)->(){
+	let correct_len = permutations.len();	
+	let unique_checked:HashSet<_> = permutations.iter().collect();
+	println!("executing test...");
+	let actuall_len = unique_checked.len();
+	assert_eq!(actuall_len ,correct_len,"the actuall lenght is {} the correct len is {} the permutation function is fucked lol",actuall_len,correct_len);
+	println!("test successfully executed, yay ");
 }
