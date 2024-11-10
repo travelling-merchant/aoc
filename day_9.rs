@@ -1,16 +1,16 @@
-use std::fs;
 use std::collections::HashSet;
+use std::fs;
 use std::time::Instant;
-const FILE_NAME:&str = "day_9.txt";
+const FILE_NAME: &str = "day_9.txt";
 fn main() {
-	let start = Instant::now();
+    let start = Instant::now();
     let locations = create_the_list();
     let m = permutations(locations);
     let journey_dt = get_journey_data();
-    let r_one = calc_tsp(journey_dt, m);
+    let (r_one, r_two) = calc_tsp(journey_dt, m);
     println!("Solution to Part 1 = {:#?}", r_one);
+    println!("Solution to Part 2 = {:#?}", r_two);
     println!("Time taken {:#?}", start.elapsed());
-	
 }
 #[derive(Debug)]
 struct Journey {
@@ -18,10 +18,11 @@ struct Journey {
     target_loc: String,
     dist: u16,
 }
-fn calc_tsp(journeys: Vec<Journey>, routes: HashSet<Vec<String>>) -> u16 {
-	test_uwu(&routes);
-	println!("calculate tsp...");
+fn calc_tsp(journeys: Vec<Journey>, routes: HashSet<Vec<String>>) -> (u16, u16) {
+    test_uwu(&routes);
+    println!("calculate tsp...");
     let mut total_dist_count = u16::MAX;
+    let mut total_distaster = 0;
     for route in routes {
         let mut dist_counter: u16 = 0;
         for (i, loc) in route.iter().enumerate() {
@@ -35,17 +36,19 @@ fn calc_tsp(journeys: Vec<Journey>, routes: HashSet<Vec<String>>) -> u16 {
                 } else {
                     if total_dist_count > dist_counter {
                         total_dist_count = dist_counter;
+                    } else if total_distaster < dist_counter {
+                        total_distaster = dist_counter;
                     }
                 }
             }
         }
     }
-    total_dist_count
+    (total_dist_count, total_distaster)
 }
 
 fn get_journey_data() -> Vec<Journey> {
-    let raw_data = fs::read_to_string(FILE_NAME)
-        .expect("If you see this, you fucked up real bad lol");
+    let raw_data =
+        fs::read_to_string(FILE_NAME).expect("If you see this, you fucked up real bad lol");
     let mut sweet_journeys: Vec<Journey> = Vec::new();
     for entry in raw_data.lines() {
         let loc_one = entry
@@ -96,24 +99,29 @@ fn create_the_list() -> Vec<String> {
 fn permutations(locations: Vec<String>) -> HashSet<Vec<String>> {
     let mut all_combos = HashSet::new();
     all_combos.insert(locations.clone());
-	for i in 0..locations.len(){
-	let mut remaning = locations.to_vec();
-	remaning.remove(i);
-	
-	let sub_permutations = permutations(remaning);
-		for mut sub_permutation in sub_permutations{
-		sub_permutation.insert(0,locations[i].clone());
-		all_combos.insert(sub_permutation);
-		}
-	}
+    for i in 0..locations.len() {
+        let mut remaning = locations.to_vec();
+        remaning.remove(i);
+
+        let sub_permutations = permutations(remaning);
+        for mut sub_permutation in sub_permutations {
+            sub_permutation.insert(0, locations[i].clone());
+            all_combos.insert(sub_permutation);
+        }
+    }
 
     all_combos
 }
-fn test_uwu(permutations:&HashSet<Vec<String>>)->(){
-	let correct_len = permutations.len();	
-	let unique_checked:HashSet<_> = permutations.iter().collect();
-	println!("executing test...");
-	let actuall_len = unique_checked.len();
-	assert_eq!(actuall_len ,correct_len,"the actuall lenght is {} the correct len is {} the permutation function is fucked lol",actuall_len,correct_len);
-	println!("test successfully executed, yay ");
+
+fn test_uwu(permutations: &HashSet<Vec<String>>) -> () {
+    let correct_len = permutations.len();
+    let unique_checked: HashSet<_> = permutations.iter().collect();
+    println!("executing test...");
+    let actuall_len = unique_checked.len();
+    assert_eq!(
+        actuall_len, correct_len,
+        "the actuall lenght is {} the correct len is {} the permutation function is fucked lol",
+        actuall_len, correct_len
+    );
+    println!("test successfully executed, yay ");
 }
