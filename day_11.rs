@@ -1,3 +1,6 @@
+use std::convert::TryFrom;
+use std::primitive::u8;
+   
 const ALPHA: [char; 26] = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
     't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -20,7 +23,7 @@ fn password_incrementer(mut pw:String) -> String{
 			let mut count = 0;
             for c in bytes_pw.clone().iter().rev() {
                 if (*c as u8) < 122 {
-					println!( "c as bytes {}",*c as u8);
+					//println!( "c as bytes {}",*c as u8);
                     bytes_pw[len-count] += 1;
                     break 'inner;
                 } else {
@@ -30,7 +33,7 @@ fn password_incrementer(mut pw:String) -> String{
             }
         }
         let new_pw = std::str::from_utf8(&bytes_pw).expect("yes yes yes yes");
-        println!("potental new pw => {}", &new_pw);
+        //println!("potental new pw => {}", &new_pw);
         m = validate(&new_pw);
 		pw =  new_pw.to_string();
     }
@@ -41,16 +44,10 @@ fn validate(pw: &str) -> bool {
     if pw.contains('i') || pw.contains('o') || pw.contains('l') {
         return false;
     }
-    let mut p = pw.chars();
-    let p_len = pw.len() - 2;
-    p.next();
-    if !pw
-        .chars()
-        .take(p_len)
-        .any(|c| c == p.next().expect("tired?"))
-    {
-        return false;
-    }
+
+	let fullfil_rec_two = validate_contains_doublicates(&pw);
+	if fullfil_rec_two == false {return false;}
+
     let len = ALPHA.len() - 2;
     let mut n = 0;
     for _ in 0..len {
@@ -66,4 +63,25 @@ fn validate(pw: &str) -> bool {
         n += 1;
     }
     false
+}
+
+fn validate_contains_doublicates(pw:&str)->bool{
+	let mut result = false;
+    let mut p = pw.chars();
+    let p_len = pw.len() - 1;
+    p.next();
+	let mut double_counter :u8= 0;
+	let mut index_vecu:Vec<u8> = Vec::new();
+    	for (i,w) in pw.chars().take(p_len).enumerate(){
+			let n:u8 = u8::try_from(i).ok().expect("the pw is only 8 chars lol");
+			if w == p.next().expect("what do I focus on next?, C?, Algorythms?, Rust?, Haskell?") && !index_vecu.contains(&n) && !index_vecu.contains(&(n+1)){
+			index_vecu.push(n);
+			index_vecu.push(n+1);
+			double_counter +=1;
+			}
+    	}
+	if double_counter > 1{
+	result = true;
+	}
+result
 }
