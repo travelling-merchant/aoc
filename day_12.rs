@@ -1,4 +1,6 @@
+// written in november 2024
 const PUZZLE_DATA: &str = "day_12.txt";
+const ASCII_NUM: [u8; 10] = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
 fn main() {
     test_sum_func_and_dance();
     let data =
@@ -8,80 +10,104 @@ fn main() {
 }
 
 fn sum_numbers(data: &[u8]) -> i32 {
+
     let mut total_sum: i32 = 0;
-    let ascii_num: [u8; 10] = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
-    let ascii_minus = 45;
-    let mut is_minus: bool = false;
-    let mut last_symbol: u8 = 0;
-    let mut intermediate_num = 0;
-    let mut itoratoru = data.iter();
-	let mut count = 0;
-    itoratoru.next();
-    let len = data.len() - 1;
+    let mut initialze_bool: bool = false;
+    let mut intermed_num: Option<[Option<&u8>; 3]> = None;
+    let mut next_symbol = data.iter();
+    let len = data.len();
     for byte in data[0..len].iter() {
-        println!("{}", byte);
-        let next = itoratoru.next();
-        if ascii_num.contains(byte) && ascii_num.contains(next.expect("the fire has gone out")) {
-            if last_symbol != ascii_minus {
-                last_symbol = *byte;
-            } else {
-				println!("last symbol {}", last_symbol);
-                is_minus = true;
+        let nexu_symb_u8: &u8 = next_symbol.next().expect("you fool");
+        let (current_bool, current_intermed, number_to_add) =
+            get_num_or_intermediate_num(initialze_bool, intermed_num, byte, nexu_symb_u8);
+        initialze_bool = current_bool;
+        intermed_num = current_intermed;
+        match number_to_add {
+            Some(n) => {
+				println!("n or so {}",&n);
+                total_sum = total_sum + n;
             }
-            let b: i32 = *byte as i32;
-			if intermediate_num != 0{
-            intermediate_num = b;}
-			else{
-            intermediate_num += b;
-			}
-            intermediate_num -= 48;
-            intermediate_num *= 10;
-            intermediate_num += *next.expect("but I wasn't prepared to light a new one") as i32;
-            intermediate_num -= 48;
-        } else if ascii_num.iter().any(|n| n == byte) {
-			println!("is executed bitch");
-            if intermediate_num != 0 {
-                if last_symbol == ascii_minus {
-                    is_minus = true;
-                }
-                last_symbol = *byte;
-                intermediate_num *= 10;
-                intermediate_num += *byte as i32;
-                intermediate_num -= 48;
-                if is_minus == true {
-                    total_sum -= intermediate_num as i32;
-                    is_minus = false
-                } else {
-                    total_sum += intermediate_num as i32;
-                }
-                intermediate_num = 0;
-            } else {
-				println!("count {}",count);
-				count+=1;
-                if last_symbol == ascii_minus {
-                    is_minus = true;
-                }
-				println!("last symbol {}",last_symbol);
-                last_symbol = *byte;
-                if is_minus == false {
-					println!("DUCK ");
-                    total_sum += *byte as i32;
-                    total_sum -= 48;
-                } else {
-					println!("FUCK FUCK FUCK");
-                    total_sum += 48;
-                    total_sum -= *byte as i32;
-                }
-            }
-		}
-            last_symbol = *byte;
-				if last_symbol == 45{
-		is_minus = true;	
-				}
-        
+            _ => (),
+        }
     }
     total_sum
 }
+
+fn get_num_or_intermediate_num<'a>(
+    mut is_minus: bool,
+    mut intermed_num: Option<[Option<&'a u8>; 3]>,
+    current_symb: &'a u8,
+    next_symb: &'a u8,
+) -> (bool, Option<[Option<&'a u8>; 3]>, Option<i32>) {
+	println!("coding without results ");
+    let ascii_minus: u8 = 45;
+    let ascii_number_start: u8 = 48;
+    let mut number_to_add: Option<i32> = None;
+
+    if is_minus == false && current_symb == &ascii_minus {
+        is_minus = true;
+    }
+
+    // base case lets say current is a number but next one too
+    if ASCII_NUM.contains(current_symb) && ASCII_NUM.contains(next_symb) {
+        match intermed_num {
+            Some(mut exists) => {
+                let mut counter = 0;
+                for e in exists {
+                    match e {
+                        None => {
+                            exists[counter] = Some(current_symb);
+                            break;
+                        }
+                        Some(_) => (),
+                    }
+                    counter += 1;
+                }
+            }
+            None => {
+                intermed_num = Some([Some(current_symb), None, None]);
+            }
+        };
+    } else if ASCII_NUM.contains(current_symb) {
+        match intermed_num {
+            Some(awray) => {
+                number_to_add = Some(0);
+                for (last_entry, _) in intermed_num.into_iter().enumerate() {
+                    let mut return_number =
+                        number_to_add.expect("if you see this massge printed, you know you're bad");
+                    match awray[last_entry] {
+                        Some(entry) => {
+                            return_number += *entry as i32;
+                            return_number -= ascii_number_start as i32;
+                            number_to_add = Some(return_number);
+                        }
+                        None => (),
+                    }
+
+                    if last_entry < 2 {
+                        match number_to_add {
+                            Some(n) => n * 10,
+                            _ => continue,
+                        };
+                    }
+                }
+                intermed_num = None;
+            }
+            None => number_to_add = Some(*current_symb as i32 - ascii_minus as i32),
+        }
+        if is_minus == true {
+            match number_to_add {
+                Some(nunu) => {
+                    number_to_add = Some(nunu * -1);
+                }
+                None => (),
+            }
+        }
+        is_minus = false;
+    }
+    (is_minus, intermed_num, number_to_add)
+}
+
 fn test_sum_func_and_dance() {
     println!("testing sum function");
     let data = "{w\"a\":2,\"b\":4}";
@@ -137,5 +163,5 @@ fn test_sum_func_and_dance() {
         "test 5 failed with data {} = {}",
         result_func, expected_result
     );
-println!("test complete");
+    println!("test complete");
 }
