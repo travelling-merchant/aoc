@@ -10,12 +10,12 @@ fn main() {
 }
 
 fn sum_numbers(data: &[u8]) -> i32 {
-
     let mut total_sum: i32 = 0;
     let mut initialze_bool: bool = false;
     let mut intermed_num: Option<[Option<&u8>; 3]> = None;
     let mut next_symbol = data.iter();
-    let len = data.len();
+    next_symbol.next();
+    let len = data.len() - 1;
     for byte in data[0..len].iter() {
         let nexu_symb_u8: &u8 = next_symbol.next().expect("you fool");
         let (current_bool, current_intermed, number_to_add) =
@@ -24,7 +24,7 @@ fn sum_numbers(data: &[u8]) -> i32 {
         intermed_num = current_intermed;
         match number_to_add {
             Some(n) => {
-				println!("n or so {}",&n);
+                println!("n or so {}", &n);
                 total_sum = total_sum + n;
             }
             _ => (),
@@ -39,7 +39,6 @@ fn get_num_or_intermediate_num<'a>(
     current_symb: &'a u8,
     next_symb: &'a u8,
 ) -> (bool, Option<[Option<&'a u8>; 3]>, Option<i32>) {
-	println!("coding without results ");
     let ascii_minus: u8 = 45;
     let ascii_number_start: u8 = 48;
     let mut number_to_add: Option<i32> = None;
@@ -47,9 +46,13 @@ fn get_num_or_intermediate_num<'a>(
     if is_minus == false && current_symb == &ascii_minus {
         is_minus = true;
     }
-
+    if ASCII_NUM.contains(current_symb) {
+        println!(" current smbowldFF{}{}", current_symb, next_symb);
+        println!(" current ascuu {:?}", ASCII_NUM[0]);
+    }
     // base case lets say current is a number but next one too
     if ASCII_NUM.contains(current_symb) && ASCII_NUM.contains(next_symb) {
+        println!(" MAYBE YOU ARE STUPID {:?}", current_symb);
         match intermed_num {
             Some(mut exists) => {
                 let mut counter = 0;
@@ -59,7 +62,7 @@ fn get_num_or_intermediate_num<'a>(
                             exists[counter] = Some(current_symb);
                             break;
                         }
-                        Some(_) => (),
+                        Some(_) => println!("this happend"),
                     }
                     counter += 1;
                 }
@@ -69,8 +72,10 @@ fn get_num_or_intermediate_num<'a>(
             }
         };
     } else if ASCII_NUM.contains(current_symb) {
+        println!("coding without results {}", current_symb);
         match intermed_num {
             Some(awray) => {
+                println!("intermed num owo {:#?}", intermed_num);
                 number_to_add = Some(0);
                 for (last_entry, _) in intermed_num.into_iter().enumerate() {
                     let mut return_number =
@@ -93,7 +98,7 @@ fn get_num_or_intermediate_num<'a>(
                 }
                 intermed_num = None;
             }
-            None => number_to_add = Some(*current_symb as i32 - ascii_minus as i32),
+            None => number_to_add = Some(*current_symb as i32 - ascii_number_start as i32),
         }
         if is_minus == true {
             match number_to_add {
@@ -105,6 +110,7 @@ fn get_num_or_intermediate_num<'a>(
         }
         is_minus = false;
     }
+    println!("number_to_add {:#?}", Some(number_to_add));
     (is_minus, intermed_num, number_to_add)
 }
 
@@ -155,8 +161,8 @@ fn test_sum_func_and_dance() {
         result_func, expected_result
     );
 
-    let data = "{441}";
-    let expected_result = 441;
+    let data = "{451}";
+    let expected_result = 451;
     let result_func = sum_numbers(&data.as_bytes());
     assert_eq!(
         result_func, expected_result,
