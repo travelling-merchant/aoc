@@ -6,7 +6,7 @@ fn main() {
     let data =
         std::fs::read_to_string(PUZZLE_DATA.to_string()).expect("didn't you forgot something?");
     let m = sum_numbers(&data.as_bytes());
-    println!("data lenght {}", m);
+    println!("Solution part one = {}", m);
 }
 
 fn sum_numbers(data: &[u8]) -> i32 {
@@ -24,7 +24,6 @@ fn sum_numbers(data: &[u8]) -> i32 {
         intermed_num = current_intermed;
         match number_to_add {
             Some(n) => {
-                println!("n or so {}", &n);
                 total_sum = total_sum + n;
             }
             _ => (),
@@ -46,81 +45,58 @@ fn get_num_or_intermediate_num<'a>(
     if is_minus == false && current_symb == &ascii_minus {
         is_minus = true;
     }
-    if ASCII_NUM.contains(current_symb) {
-        println!(" current smbowldFF{}{}", current_symb, next_symb);
-        println!(" current ascuu {:?}", ASCII_NUM[0]);
-    }
-    // base case lets say current is a number but next one too
+    if ASCII_NUM.contains(current_symb) {}
     if ASCII_NUM.contains(current_symb) && ASCII_NUM.contains(next_symb) {
-        println!("cheescake {:?}", current_symb);
         match intermed_num {
             Some(mut exists) => {
-                for e in exists.iter_mut(){
-						if e.is_none(){
-							*e = Some(current_symb);
-							break;
+                for e in exists.iter_mut() {
+                    if e.is_none() {
+                        *e = Some(current_symb);
+                        break;
                     }
                 }
-				intermed_num = Some(exists)
+                intermed_num = Some(exists)
             }
             None => {
                 intermed_num = Some([Some(current_symb), None, None]);
             }
         };
     } else if ASCII_NUM.contains(current_symb) {
-		let mut is_last_element = 0;
-        println!("coding without results {}", current_symb);
+        let mut is_last_element = 0;
         match intermed_num {
             Some(mut awray) => {
-				for a in awray{
-				if a.is_some(){
-					is_last_element+=1;
-				}
-				}
-				//if awray[1].is_some(){
-				//is_last_element = 1
-				//}
-				//if awray[2].is_some(){
-				//is_last_element = 2
-				//}
-				awray[2] = Some(current_symb);
-				intermed_num = Some(awray);
-                println!("intermed num owo {:#?}", intermed_num);
+                for a in awray {
+                    if a.is_some() {
+                        is_last_element += 1;
+                    }
+                }
+                awray[2] = Some(current_symb);
                 number_to_add = Some(0);
                 for last_entry in 0..=2 {
-					println!("my loop has been looped so many time {}",last_entry);
-					println!("my loop has been looped so many time {:#?}{:#?}",awray,intermed_num);
                     let mut return_number =
                         number_to_add.expect("if you see this massge printed, you know you're bad");
                     match awray[last_entry] {
                         Some(entry) => {
-							println!("and sowie dance with the flowers {:#?}",number_to_add);
                             return_number += *entry as i32;
                             return_number -= ascii_number_start as i32;
                             number_to_add = Some(return_number);
-							println!("and sowie dance with the flowers {:#?}",number_to_add);
-							println!("my loop has been looped so many time {:#?}{:#?}",awray,intermed_num);
                         }
                         None => (),
                     }
 
                     if is_last_element > 0 {
-							is_last_element -=1;
-							println!("BUT WHY and sowie dance with the flowers {:#?}",number_to_add);
+                        is_last_element -= 1;
                         match number_to_add {
-                            Some(n) => number_to_add = Some( n * 10),
+                            Some(n) => number_to_add = Some(n * 10),
                             _ => continue,
                         };
                     }
-
                 }
                 intermed_num = None;
-							println!("and sowie dance with the flowers {:#?}",number_to_add);
             }
             None => number_to_add = Some(*current_symb as i32 - ascii_number_start as i32),
-		}
+        }
         if is_minus == true {
-			println!("hohohho");
             match number_to_add {
                 Some(nunu) => {
                     number_to_add = Some(nunu * -1);
@@ -130,12 +106,11 @@ fn get_num_or_intermediate_num<'a>(
         }
         is_minus = false;
     }
-    println!("number_to_add {:#?}", Some(number_to_add));
     (is_minus, intermed_num, number_to_add)
 }
 
 fn test_sum_func_and_dance() {
-    println!("testing sum function");
+    println!("executing tests sum function...");
     let data = "{w\"a\":2,\"b\":4}";
     let expected_result = 6;
 
@@ -196,6 +171,7 @@ fn test_sum_func_and_dance() {
         result_func, expected_result,
         "test 6 failed with data {} = {}",
         result_func, expected_result
-	);
-    println!("test complete");
+    );
+    println!("tests complete!");
+    println!("");
 }
