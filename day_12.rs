@@ -52,55 +52,75 @@ fn get_num_or_intermediate_num<'a>(
     }
     // base case lets say current is a number but next one too
     if ASCII_NUM.contains(current_symb) && ASCII_NUM.contains(next_symb) {
-        println!(" MAYBE YOU ARE STUPID {:?}", current_symb);
+        println!("cheescake {:?}", current_symb);
         match intermed_num {
             Some(mut exists) => {
-                let mut counter = 0;
-                for e in exists {
-                    match e {
-                        None => {
-                            exists[counter] = Some(current_symb);
-                            break;
-                        }
-                        Some(_) => println!("this happend"),
+                for e in exists.iter_mut(){
+						if e.is_none(){
+							*e = Some(current_symb);
+							break;
                     }
-                    counter += 1;
                 }
+				intermed_num = Some(exists)
             }
             None => {
                 intermed_num = Some([Some(current_symb), None, None]);
             }
         };
     } else if ASCII_NUM.contains(current_symb) {
+		let mut is_last_element = 0;
         println!("coding without results {}", current_symb);
         match intermed_num {
-            Some(awray) => {
+            Some(mut awray) => {
+				for a in awray{
+				if a.is_some(){
+					is_last_element+=1;
+				}
+				}
+				//if awray[1].is_some(){
+				//is_last_element = 1
+				//}
+				//if awray[2].is_some(){
+				//is_last_element = 2
+				//}
+				awray[2] = Some(current_symb);
+				intermed_num = Some(awray);
                 println!("intermed num owo {:#?}", intermed_num);
                 number_to_add = Some(0);
-                for (last_entry, _) in intermed_num.into_iter().enumerate() {
+                for last_entry in 0..=2 {
+					println!("my loop has been looped so many time {}",last_entry);
+					println!("my loop has been looped so many time {:#?}{:#?}",awray,intermed_num);
                     let mut return_number =
                         number_to_add.expect("if you see this massge printed, you know you're bad");
                     match awray[last_entry] {
                         Some(entry) => {
+							println!("and sowie dance with the flowers {:#?}",number_to_add);
                             return_number += *entry as i32;
                             return_number -= ascii_number_start as i32;
                             number_to_add = Some(return_number);
+							println!("and sowie dance with the flowers {:#?}",number_to_add);
+							println!("my loop has been looped so many time {:#?}{:#?}",awray,intermed_num);
                         }
                         None => (),
                     }
 
-                    if last_entry < 2 {
+                    if is_last_element > 0 {
+							is_last_element -=1;
+							println!("BUT WHY and sowie dance with the flowers {:#?}",number_to_add);
                         match number_to_add {
-                            Some(n) => n * 10,
+                            Some(n) => number_to_add = Some( n * 10),
                             _ => continue,
                         };
                     }
+
                 }
                 intermed_num = None;
+							println!("and sowie dance with the flowers {:#?}",number_to_add);
             }
             None => number_to_add = Some(*current_symb as i32 - ascii_number_start as i32),
-        }
+		}
         if is_minus == true {
+			println!("hohohho");
             match number_to_add {
                 Some(nunu) => {
                     number_to_add = Some(nunu * -1);
@@ -161,13 +181,21 @@ fn test_sum_func_and_dance() {
         result_func, expected_result
     );
 
-    let data = "{451}";
-    let expected_result = 451;
+    let data = "{-451}";
+    let expected_result = -451;
     let result_func = sum_numbers(&data.as_bytes());
     assert_eq!(
         result_func, expected_result,
         "test 5 failed with data {} = {}",
         result_func, expected_result
     );
+    let data = "{-51}";
+    let expected_result = -51;
+    let result_func = sum_numbers(&data.as_bytes());
+    assert_eq!(
+        result_func, expected_result,
+        "test 6 failed with data {} = {}",
+        result_func, expected_result
+	);
     println!("test complete");
 }
