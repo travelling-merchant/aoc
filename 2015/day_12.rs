@@ -1,12 +1,57 @@
 // written in november 2024
 const PUZZLE_DATA: &str = "day_12.txt";
 const ASCII_NUM: [u8; 10] = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+
 fn main() {
     test_sum_func_and_dance();
     let data =
         std::fs::read_to_string(PUZZLE_DATA.to_string()).expect("didn't you forgot something?");
     let m = sum_numbers(&data.as_bytes());
+    let l = pew_pew(&data.as_bytes());
     println!("Solution part one = {}", m);
+    println!("Solution part two = {}", l);
+}
+
+fn pew_pew(data:&[u8])->i16{
+// function to remove all objects or aways with the filthy phrase red in them
+let redo = [114,101,100];
+let away_end_symb:u8 = 93;
+let obj_end_symb:u8 = 125;
+let away_star_symb:u8 = 91;
+let obj_star_symb:u8 = 123;
+let mut brackets_stack:Vec<(u8,u16)> = Vec::new();
+let mut new_data_uwu:Vec<&u8> = Vec::new();
+let mut current_three = [0u8;3];
+
+
+
+	{
+	current_three[1] = data[0];
+		if current_three[1] == away_star_symb || current_three[1] == obj_star_symb{
+		brackets_stack.push((current_three[1],0));
+		}
+	current_three[2] = data[1];
+		if current_three[2] == away_star_symb || current_three[2] == obj_star_symb{
+		brackets_stack.push((current_three[2],1));
+		}
+	}
+
+println!("paw paw {:#?}",current_three);
+/*
+for meow_meow in data[2..].iter(){
+	current_three.rotate_left(1);
+	if meow_meow == obj_star_symb || meow_meow == away_star_symb{
+		brackets_stack.push((meow_meow,index
+	}
+	println!("{:#?}",&meow_meow);
+	current_three[2] = *meow_meow;
+}
+*/
+println!("paw paw {:#?}",current_three);
+current_three.rotate_left(1);
+println!("paw paw {:#?}",current_three);
+//println!("paw paw {:#?}",data);
+666
 }
 
 fn sum_numbers(data: &[u8]) -> i32 {
