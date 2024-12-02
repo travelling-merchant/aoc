@@ -17,7 +17,6 @@ let mut total_or_so = 0;
 			for (i,_) in vecu.iter().enumerate(){
 				let mut test_v:Vec<_> = vecu.iter().map(|e| e.clone()).collect();
 				test_v.remove(i);
-				println!("vecu {:#?}",test_v);
 				let r = check_req(&test_v);
 				if r{
 					additional_valid +=1;
@@ -33,20 +32,6 @@ let mut total_or_so = 0;
 total_or_so
 }
 
-fn get_dif(n_1:&u8,n_2:&u8)->bool{
-	let mut b = false;
-	if n_1 > n_2{
-		let r = n_1 - n_2;	
-			if r < 4 && r >0{	b = true;}	
-		}
-	else {
-		let r = n_2 - n_1 	;
-		if r < 4 && r >0 {
-			b = true;
-		}
-	}
-b
-}
 fn x(input: &String) -> (u16,Vec<Vec<u8>>) {
 	let mut grand_total:u16 = 0;
 	let mut sad_meow:Vec<Vec<u8>> = Vec::new();
