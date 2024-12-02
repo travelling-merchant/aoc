@@ -5,74 +5,31 @@ fn main() {
     let (r_one,v) = x(&input);
 	let r_two = day_two_and_im_aleady_in_despair(v);
     println!("Solution part one = {}", r_one);
-    println!("Solution part two = {}", r_two);
+    println!("Solution part two = {}", r_two + r_one);
 }
 
 fn day_two_and_im_aleady_in_despair(v:Vec<Vec<u8>>)->u16{
 let mut total_or_so = 0;
-
-	for list in v{
-		let mut bonus = true;
-		let mut small_to_big:bool = false;
-		let mut check_one = false;
-		let mut count = 0;
-
-		if list[0] < list[1]{
-			small_to_big = true;	
-		}
-	
-		let len = list.len()-1;	
-
-		for (i,num) in list[0..len].into_iter().enumerate(){
-			println!("entry is {}",num);
-			let dif = get_dif(&num,&list[i+1]);
-			if small_to_big && *num < list[i+1] && dif{
-			println!("chesscake");
-			count +=1;	
+	for vecu in v{
+		let is_valid = check_req(&vecu);	
+		if !is_valid{
+			let mut additional_valid = 0;
+			for (i,_) in vecu.iter().enumerate(){
+				let mut test_v:Vec<_> = vecu.iter().map(|e| e.clone()).collect();
+				test_v.remove(i);
+				println!("vecu {:#?}",test_v);
+				let r = check_req(&test_v);
+				if r{
+					additional_valid +=1;
+				}	
 			}
-			else if !small_to_big && *num > list[i+1] && dif{
-			println!("strawberry cake");
-			count +=1;	
+		if additional_valid >0{
+			total_or_so +=1;
 			}
-			else if bonus == true && i >0 {
-				bonus = false;
-				println!("num {}",num);
-				let mut v:Vec<u8> = list.iter().map(|e | e.clone()).collect();
-				v.remove(i);
-				println!(" vectoru {:#?}",v);
-				let is_valid = check_req(&v);
-				if is_valid{
-				count+=1;
-				}else if !is_valid && i == len-1{
-					print!("fuck you");
-				let mut vv:Vec<u8> = list.iter().map(|e | e.clone()).collect();
-				vv.remove(len);
-				println!(" vectoru {:#?}",vv);
-				let is_valid_too = check_req(&vv);
-				println!("bgwiefbwiezfgo {}",is_valid_too);
-				if is_valid_too{
-				println!("bgwiefbwiezfgo {}",is_valid_too);
-				count+=1;
-				}
-				}
-			}
-			else if i == 0 {
-				let w = get_dif(&num,&list[i+2]);
-				if  w{	
-				count+=1;
-				}
-			}
-		}
-			println!("count is {}",count);
-		if count == len{
-			println!("count is {}",count);
-			check_one = true;
 		}
 		
-		if check_one == true{
-		total_or_so +=1;
-		}	
-	}		
+	}
+
 total_or_so
 }
 
