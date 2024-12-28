@@ -1,12 +1,129 @@
 // written in november 2024
+use std::ops::Range;
+use std::time::Instant;
 const PUZZLE_DATA: &str = "day_12.txt";
 const ASCII_NUM: [u8; 10] = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
 fn main() {
+    let start = Instant::now();
     test_sum_func_and_dance();
     let data =
         std::fs::read_to_string(PUZZLE_DATA.to_string()).expect("didn't you forgot something?");
-    let m = sum_numbers(&data.as_bytes());
-    println!("Solution part one = {}", m);
+    let data_2 =
+        std::fs::read_to_string("test.txt".to_string()).expect("didn't you forgot something?");
+    let r_one = sum_numbers(&data.as_bytes());
+    let pre_proccessed_r_two = censor_red(data);
+    let r_two = sum_numbers(&pre_proccessed_r_two.as_bytes());
+    println!("Solution part one = {}", r_one);
+    println!(
+        "Solution part two (a wrong answer that is to high is [74780]), current answer = {}",
+        r_two
+    );
+    println!("Time taken {:#?}", start.elapsed());
+}
+
+fn censor_red(mut data: String) -> String {
+    //let len = data.len();
+    //for (index,chars) in data[..=len-2].chars().collect::<Vec<_>>().windows(3).enumerate(){
+    //	let mut maybe_red = chars[0.2].collect();
+    //	if chars == "red"{
+    //		println!("yuhhe");
+    //	}
+    //}
+
+    let mut ranger_platoon: Vec<Range<usize>> = Vec::new();
+    let something: Vec<_> = data.match_indices("red").map(|value| value.0).collect();
+    for thing in something.iter() {
+        let ending = race_to_the_end(*thing, &data);
+        println!("some endings {:#?}", ending);
+        match ending {
+            Some(ending) => {
+                let start = after_the_end_is_the_start(*thing, &data);
+                let ranger: Range<usize> = Range {
+                    start: start,
+                    end: ending,
+                };
+                ranger_platoon.push(ranger);
+            }
+            None => (),
+        }
+    }
+
+	println!("ranger or so{:#?}",ranger_platoon);
+    let something :String= data
+        .chars()
+        .enumerate()
+        .filter(|i| {
+            ranger_platoon
+                .iter()
+                .map(|rawr| !rawr.contains(&i.0))
+                .reduce(|what, ever| what && ever)
+                .expect("you going to blow up?")
+        })
+        .map(|i| i.1)
+        .collect::<String>();
+    print!(" the print at the very end {}", something);
+    something
+}
+
+fn after_the_end_is_the_start(thing: usize, data: &String) -> usize {
+    let mut index_counter = thing.clone();
+    let staring_pos = data[0..=thing-1].chars().rev();
+    let scan_result: (char, usize) = staring_pos
+        .scan((1, 1), |state, x| {
+            index_counter -= 1;
+            match x {
+                '}' => state.0 += 1,
+                ']' => state.1 += 1,
+                '[' => state.1 -= 1,
+                '{' => state.0 -= 1,
+                _ => (),
+            }
+            if state.0 == 0 {
+                return None;
+            } else if state.1 == 0 {
+                return None;
+            } else {
+                return Some((x, index_counter));
+            }
+        })
+        .last()
+        .expect("someone belives its always something uwu");
+    scan_result.1;
+	println!("should be a number {}",scan_result.1);
+scan_result.1
+}
+
+fn race_to_the_end(thing: usize, data: &String) -> Option<usize> {
+    let mut index_counter = thing.clone();
+    let staring_pos = data.trim().chars().skip(thing  );
+	let _= staring_pos.clone().inspect(|e|println!("in theory {:#?}",e));
+	let mut is_suqare = false;
+    let scan_result: (char, usize) = staring_pos.inspect(|e|println!("in theory {}",e))
+        .scan((1, 1), |state, x| {
+            index_counter += 1;
+            match x {
+                '}' => state.0 -= 1,
+                ']' => state.1 -= 1,
+                '[' => state.1 += 1,
+                '{' => state.0 += 1,
+                _ => (),
+            }
+            if state.0 == 0 {
+                return None;
+            } else if state.1 == 0 {
+				is_suqare = true;
+                return None;
+            } else {
+                return Some((x, index_counter));
+            }
+        })
+        .last()
+        .expect("someone belives its always something uwu");
+    if !is_suqare {
+println!("scan res {:#?}",scan_result);
+        return Some(scan_result.1);
+    }
+    None
 }
 
 fn sum_numbers(data: &[u8]) -> i32 {
