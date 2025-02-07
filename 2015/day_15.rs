@@ -18,13 +18,14 @@ struct Ingredient {
 
 fn main() {
     let test_ingredients = construct_ingredients(TEST_INPUT);
-    let test_score = aquire_cookie_score(test_ingredients);
+    let (test_score, calories_core) = aquire_cookie_score(test_ingredients);
     let real_ingredients = construct_ingredients(REAL_INPUT);
-    let real_score = oh_cookies_are_baked_lol(real_ingredients);
-    if test_score != 62842880 {
+    let (real_score, best_cookie) = oh_cookies_are_baked_lol(real_ingredients);
+    if test_score != 62842880 || calories_core != 57600000 {
         panic!("why don't you try doing something right for once?");
     }
     println!("Solution part one = {}", real_score);
+    println!("Solution part two = {}", best_cookie);
 }
 
 fn cook_cookie(attriute: i8, number: u32) -> i64 {
@@ -38,8 +39,9 @@ fn cook_again(a: i64, b: i64, c: i64, d: i64) -> i64 {
     }
 }
 
-fn oh_cookies_are_baked_lol(input: Vec<Ingredient>) -> i64 {
+fn oh_cookies_are_baked_lol(input: Vec<Ingredient>) -> (i64, i64) {
     let mut result: i64 = 0;
+    let mut litle_calories_result: i64 = 0;
     let magic_number: usize = 4;
     let ingrdients_comb = calc_combinations(magic_number);
     for combo in ingrdients_comb {
@@ -47,21 +49,25 @@ fn oh_cookies_are_baked_lol(input: Vec<Ingredient>) -> i64 {
         let b = cook_cookie(input[0].durability, combo[0]);
         let c = cook_cookie(input[0].flavor, combo[0]);
         let d = cook_cookie(input[0].texture, combo[0]);
+        let e = cook_cookie(input[0].calories, combo[0]);
 
         let aa = cook_cookie(input[1].capacity, combo[1]);
         let bb = cook_cookie(input[1].durability, combo[1]);
         let cc = cook_cookie(input[1].flavor, combo[1]);
         let dd = cook_cookie(input[1].texture, combo[1]);
+        let ee = cook_cookie(input[1].calories, combo[1]);
 
         let aaa = cook_cookie(input[2].capacity, combo[2]);
         let bbb = cook_cookie(input[2].durability, combo[2]);
         let ccc = cook_cookie(input[2].flavor, combo[2]);
         let ddd = cook_cookie(input[2].texture, combo[2]);
+        let eee = cook_cookie(input[2].calories, combo[2]);
 
         let aaaa = cook_cookie(input[3].capacity, combo[3]);
         let bbbb = cook_cookie(input[3].durability, combo[3]);
         let cccc = cook_cookie(input[3].flavor, combo[3]);
         let dddd = cook_cookie(input[3].texture, combo[3]);
+        let eeee = cook_cookie(input[3].calories, combo[3]);
 
         let temp_r: i64 = cook_again(
             a + aa + aaa + aaaa,
@@ -72,26 +78,41 @@ fn oh_cookies_are_baked_lol(input: Vec<Ingredient>) -> i64 {
         if temp_r > result {
             result = temp_r;
         }
+        let amount_of_weigt_gain: i64 = e + ee + eee + eeee;
+        if amount_of_weigt_gain == 500 {
+            if temp_r > litle_calories_result {
+                litle_calories_result = temp_r;
+            }
+        }
     }
-    result
+    (result, litle_calories_result)
 }
 
-fn aquire_cookie_score(input: Vec<Ingredient>) -> i64 {
+fn aquire_cookie_score(input: Vec<Ingredient>) -> (i64, i64) {
     let amount_of_ingredients = input.len();
     let ingredient_combinations = calc_combinations(amount_of_ingredients);
+    let mut litle_calories_result: i64 = 0;
     let mut result: i64 = 0;
     for combo in ingredient_combinations {
         let r = cook_cookie(input[0].capacity, combo[0]);
         let s = cook_cookie(input[0].durability, combo[0]);
         let t = cook_cookie(input[0].flavor, combo[0]);
         let u = cook_cookie(input[0].texture, combo[0]);
+        let v = cook_cookie(input[0].calories, combo[0]);
 
         let rr = cook_cookie(input[1].capacity, combo[1]);
         let ss = cook_cookie(input[1].durability, combo[1]);
         let tt = cook_cookie(input[1].flavor, combo[1]);
         let uu = cook_cookie(input[1].texture, combo[1]);
+        let vv = cook_cookie(input[1].calories, combo[1]);
 
         let temp_r: i64 = cook_again(r + rr, s + ss, t + tt, u + uu);
+        let amount_of_weigt_gain: i64 = vv + v;
+        if amount_of_weigt_gain == 500 {
+            if temp_r > litle_calories_result {
+                litle_calories_result = temp_r;
+            }
+        }
         if temp_r > 62842880 {
             panic!("fuck fuck fuck")
         }
@@ -99,7 +120,7 @@ fn aquire_cookie_score(input: Vec<Ingredient>) -> i64 {
             result = temp_r;
         }
     }
-    result
+    (result, litle_calories_result)
 }
 
 fn calc_combinations(amount_of_ingredients: usize) -> Vec<Vec<u32>> {
