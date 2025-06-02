@@ -96,9 +96,6 @@ fn create_life(mut the_light: HashMap<(u16, u16), u8>) -> HashMap<(u16, u16), u8
         useful_number += 1;
 
         for (char_index, charu) in line.chars().enumerate() {
-            // for every char if on or off
-            // get the line and char index
-            // insert state
 
             let mut real_real_char: u16 = char_index.try_into().unwrap();
             real_real_char += 1;
