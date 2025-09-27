@@ -1,15 +1,43 @@
 use std::collections::HashSet;
 const FILE_NAME: &str = "day_19.txt";
-#[derive(Debug)]
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, Debug)]
 struct TurnDogsIntoCats {
     origin: String,
     new_owo: String,
 }
 fn main() {
     let (aahhhh, whaaa) = i_wanna_see_the_horror();
-    let solution_one = iterate_trough(aahhhh, whaaa);
+
+    let solution_one = iterate_trough(&aahhhh, &whaaa);
+    let solution_two = tired(aahhhh, whaaa);
     println!("solution part one =  {}", solution_one);
+    println!("solution part two =  {}", solution_two);
 }
+fn tired(mut instructions: Vec<TurnDogsIntoCats>, mut molec: String) -> u16 {
+    let mut steps = 0;
+
+    instructions.sort_by(|a, b| b.new_owo.len().cmp(&a.new_owo.len()));
+
+    while molec != "e" {
+        for replacement in &instructions {
+            if let Some(pos) = molec.find(&replacement.new_owo) {
+                let new_molec = format!(
+                    "{}{}{}",
+                    &molec[0..pos],
+                    replacement.origin,
+                    &molec[pos + replacement.new_owo.len()..]
+                );
+
+                molec = new_molec;
+                steps += 1;
+                break;
+            }
+        }
+    }
+
+    steps
+}
+
 fn i_wanna_see_the_horror() -> (Vec<TurnDogsIntoCats>, String) {
     let mut fuck_you: Vec<TurnDogsIntoCats> = Vec::new();
     let mut target_victim = String::new();
@@ -39,7 +67,7 @@ fn i_wanna_see_the_horror() -> (Vec<TurnDogsIntoCats>, String) {
     (fuck_you, target_victim)
 }
 
-fn iterate_trough(masters_instruction: Vec<TurnDogsIntoCats>, test_subject: String) -> usize {
+fn iterate_trough(masters_instruction: &Vec<TurnDogsIntoCats>, test_subject: &String) -> usize {
     let mut all_molecules: HashSet<String> = HashSet::new();
     for instruction in masters_instruction.iter() {
         let instruct_len = instruction.origin.len();
