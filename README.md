@@ -1,25 +1,28 @@
 # aoc
 repo containing my aoc code
 
-i decided to challange me to only use vi or vim, (no nvim) without lsp,
-cargo,  llms or other means except the offical rust documentation
-
 to use the files type
-```cli
+
+```bash
+# Rust code 
 rustc rustfile.rs
 
 ./rustfile
 
+# C Code  
+
+cc cFile.c
+
+./a.out
+
 ```
 
-additional notes
+doing this mainly to learn rust
 
-I made a exception on technical docs like the md5 docs to use ai and other docs.
-so even someone like me can understand it in a reasonble time.
+![Picure of Rust Logo](https://github.com/travelling-merchant/travelling-merchant/blob/main/pictures/Rust.png)
 
-further challange ideas 
+but to understand computers better i recently decided to solve somethings in C too
+with whatever compiler is under cc.
 
-solve a year without clone
-use only hex as values
-use only binarry numbers
-disable undo and undo undo fully
+![Picutre of CC](https://github.com/travelling-merchant/travelling-merchant/blob/main/pictures/cc.jpeg)
+
