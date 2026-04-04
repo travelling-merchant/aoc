@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 
 unsigned int calcSum(char *file, unsigned int size);
 
@@ -17,28 +16,40 @@ int main() {
 
   fgets(fileContent, fSize, fptr);
   unsigned int resultOne = calcSum(fileContent, fSize);
-  printf("\n Solution part one = %u", resultOne);
+  printf("\n Solution part one = %u", resultOne >> 16);
+  printf("\n Solution part two = %u", resultOne & 0xFFFF);
   fclose(fptr);
   return 0;
 }
-
 unsigned int calcSum(char *file, unsigned int size) {
-  unsigned int sum = 0;
-  unsigned int lalala = 0;
-  unsigned int blabla = 0;
+  unsigned short sum = 0;
+  unsigned short sun = 0;
+  unsigned short lalala = 0;
+  unsigned short blabla = 0;
+	unsigned short half = size /2;
+
   for (int number = 0; number < size - 1; number++) {
+	unsigned char current = file[number];	
+
+	if (number < half){
+		if (current == file[number + half]){
+			sun += current -48;
+			sun += file[number+half] -48;
+		}
+	}	
 
     if (number == 0) {
-      lalala = file[number];
+      lalala = current;
     }
-    blabla = file[number];
-    if (file[number] == file[(number + 1 % size)]) {
-      sum += (file[number] - '0');
+    blabla = current;
+    if (current  == file[(number + 1 % size)]) {
+      sum += (current  - '0');
       // substracting the char 0 is the same as sum -= 48;
     }
   }
   if (blabla == lalala) {
     sum += lalala - '0';
   }
-  return sum;
+	
+  return ((unsigned int )sum <<  16) | sun;
 }
