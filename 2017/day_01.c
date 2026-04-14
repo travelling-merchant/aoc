@@ -26,30 +26,30 @@ unsigned int calcSum(char *file, unsigned int size) {
   unsigned short sun = 0;
   unsigned short lalala = 0;
   unsigned short blabla = 0;
-	unsigned short half = size /2;
+  unsigned short half = size / 2;
 
   for (int number = 0; number < size - 1; number++) {
-	unsigned char current = file[number];	
+    unsigned char current = file[number];
 
-	if (number < half){
-		if (current == file[number + half]){
-			sun += current -48;
-			sun += file[number+half] -48;
-		}
-	}	
+    if (number < half) {
+      if (current == file[number + half]) {
+        sun += current - 48;
+        sun += file[number + half] - 48;
+      }
+    }
 
     if (number == 0) {
       lalala = current;
     }
     blabla = current;
-    if (current  == file[(number + 1 % size)]) {
-      sum += (current  - '0');
+    if (current == file[(number + 1 % size)]) {
+      sum += (current - '0');
       // substracting the char 0 is the same as sum -= 48;
     }
   }
   if (blabla == lalala) {
     sum += lalala - '0';
   }
-	
-  return ((unsigned int )sum <<  16) | sun;
+
+  return ((unsigned int)sum << 16) | sun;
 }
